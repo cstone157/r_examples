@@ -1,0 +1,22 @@
+---
+Learning Base R
+Chapter 02
+---
+
+Exercise 2.1 ) Write an R command to compute $100*(1 + \dfrac{0.05}{12})^{24}$ which is the value of $100 invest at an annual percentage rate (often abbreviated APR) of 5% after two years with monthly compounding.
+```{r}
+100 * (1 + 0.05/12)^24
+```
+
+
+Exercise 2.2 ) What is display by the following R command?  (Guess before computing this in R.)
+$$ > 5 \%\% 2 $$
+```{r}
+5 %% 2
+```
+
+
+Exercise 2.3 ) What is the remainder when 3333 is divided by 222?
+```{r}
+3333 / 222
+```
