@@ -20,3 +20,26 @@ Exercise 2.3 ) What is the remainder when 3333 is divided by 222?
 ```{r}
 3333 / 222
 ```
+
+
+Exercise 2.4 ) Use R to investigate the behavior of $(1 + 1/n)^n$ for large, positive integer values of n
+```{r}
+(1 + 1/2)^2
+(1 + 1/5)^5
+(1 + 1/10)^10
+(1 + 1/100)^100
+```
+
+
+Exercise 2.5 ) Write R commands to calculate the golden ratio $$\phi = \dfrac{1 + \sqrt{5}}{2}$$ to ten-digit accuracy.
+```{r}
+options(digits = 10)
+(1 + sqrt(5))/2
+```
+
+
+Exercise 2.6 ) The speed of light is 299,792,458 meters per second.  Use R to calculate the amount of enery (the unites will be Joules) in 10 kilograms of mass using Albert Einstein's $$E = m*c^2$$ formula, where m is mass, c is the speed of light and E is the energy.
+```{r}
+10*299792458^2
+```
+
