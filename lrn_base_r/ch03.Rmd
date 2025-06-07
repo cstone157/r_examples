@@ -1,0 +1,14 @@
+---
+Learning Base R
+Chapter 03
+---
+
+Exercise 3.1 ) The Economic Order Quantity model, or EOQ model, gives the optimal order quantity as $$Q = \sqrt{\dfrac{2*D*K}{h}}$$ where D is the annual demand, K is the fixed cost per order, and h is the annual holding cost per item.  The EOQ model is used to solve inventory control problems and is appropriate when demand for items can be assumed to be constant over time.  Wrete R commands that set the objects D, K, and h to $$D = 1000, K = 5, and h = 0.25$$ and compute the associated value of the optimal order quantity Q.
+```{r}
+D = 1000
+K = 5
+h = 0.25
+
+Q = sqrt((2*D*K) / h)
+Q
+```
