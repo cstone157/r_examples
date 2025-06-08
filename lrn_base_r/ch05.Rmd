@@ -1,0 +1,12 @@
+---
+Learning Base R
+Chapter 05
+---
+
+
+Exercise 5.1 ) 
+```{r}
+
+```
+
+

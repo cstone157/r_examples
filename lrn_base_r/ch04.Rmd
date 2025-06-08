@@ -1,0 +1,36 @@
+---
+Learning Base R
+Chapter 04
+---
+
+
+Exercise 4.1 ) Use the rep function to create a vector that has the following elements: 2.7,  8.0,  3.0,  2.7,  8.0,  3.0.
+```{r}
+rep(c(2.7, 8.0, 3.0), 2)
+```
+
+
+Exercise 4.2 ) Use the seq function with the by argument to create a vector that has the following elements: 0.0, 0.4, 0.8, 1.2, 1.6, 2.0.
+```{r}
+seq(0, 2, by=0.4)
+```
+
+
+Exercise 4.3 ) What is displayed by the following R commands?  (Guess before keying the commands into R.)
+```{r}
+primes = c(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
+composites = c(4, 6, 8, 9, 10)
+primes[composites]
+```
+
+
+Exercise 4.4 ) What is displayed by the following R command?
+```{r}
+seq(3, 28, by=11) %/% 4
+```
+
+
+Exercise 4.5 ) use the seq function with the length.out argument to create a vector that has the following elements: 0.0, 0.5, 1.0, 1.5, 2.0
+```{r}
+seq(0, 2, length.out=5)
+```
