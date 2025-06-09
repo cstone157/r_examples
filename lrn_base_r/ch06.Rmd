@@ -1,0 +1,13 @@
+---
+Learning Base R
+Chapter 06
+---
+
+
+Exercise 6.1 ) Write an R command that assigns the first 18 positive integers to the elements of the 3x3x2 array named x using the default input convention.  Next, write an R command that extracts the elements of x in a fashion that includes the second and third rows, excludes the second column, and includes the second layer.
+```{r}
+x = array(1:18, dim=c(3, 3, 2))
+x
+x[2:3, c(1, 3), 2]
+```
+
