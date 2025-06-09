@@ -4,9 +4,51 @@ Chapter 05
 ---
 
 
-Exercise 5.1 ) 
+Exercise 5.1 ) Using the minimum number of keystrokes, write a single R command that constructs the matrix A give below.
+$$A = \begin{bmatrix}
+5 & 6 & 7 & 8 & 9 \\
+12 & 12 & 12 & 12 & 12 \\
+81 & 64 & 49 & 36 & 25 \\
+2 & 8 & 4 & 7 & 3
+\end{bmatrix} $$
 ```{r}
-
+rbind(5:9, rep(12, 5), seq(9, 5, by=-1)^2, c(2, 8, 4, 7, 3))
 ```
 
 
+Exercise 5.2 ) Let A and b the following 3x2 matrices
+$$A = \begin{bmatrix}
+1 & 4\\
+2 & 5\\
+3 & 6
+\end{bmatrix}  B = \begin{bmatrix}
+7 & 10 \\
+8 & 11 \\
+9 & 12 
+\end{bmatrix} $$
+Write R commands to create the matrices A and B using the matrix function, then combine A and B to create two new matrices with the rbind and cbind functions.
+```{r}
+A = matrix(1:6, 3, 2, byrow = FALSE)
+B = matrix(7:12, 3, 2, byrow = FALSE)
+
+rbind(A, B)
+cbind(A, B)
+```
+
+
+Exercise 5.3 ) Write R commands that create a 2 x 4 matrix named x that contains the integers 11, 12, ..., 18 arranged in a column-wise fashion.  Then use subscripts to extract the elements that exclude the first row and include the first and fourth columns.
+```{r}
+x = matrix(11:18, 2, 4, byrow=FALSE)
+x[2, c(1, 4)]
+```
+
+
+Exercise 5.4 ) A one-step transition matrix has elements that are between 0 and 1, row sums that equal 1, and the same number of rows and columns.  Write an R command that creates the 2x2 one-step transition matrix A with elements given by
+$$A = \begin{bmatrix}
+0.8 & 0.2\\
+0.3 & 0.7
+\end{bmatrix}$$
+```{r}
+A = rbind(c(0.8, 0.2), c(0.3, 0.7))
+A
+```
