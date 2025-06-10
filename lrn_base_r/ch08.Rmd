@@ -1,0 +1,12 @@
+---
+Learning Base R
+Chapter 08
+---
+
+
+Exercise 8.1 ) Write a one-line function names reverse with a single argument x that reverses the order of the elements in the vector x.  do not use the built-in R function rev.
+```{r}
+reverse = function(x) x[length(x):1]
+x = 1:10
+reverse(x)
+```

@@ -1,0 +1,42 @@
+---
+Learning Base R
+Chapter 07
+---
+
+
+Exercise 7.1 ) Write a single R command that calculates sin(e^4 + $\sqrt{arccos(1/3)}$)
+```{r}
+sin(exp(4) + sqrt(acos(1.0/3.0)))
+```
+
+
+Exercise 7.2 ) What is displayed by the following R commands?  (Guess before computing this in R.) <br/>
+> x = c(pi, 4/3, 7) <br/>
+> round(x, 2)
+
+```{r}
+x = c(pi, 4/3, 7)
+round(x, 2)
+```
+
+
+Exercise 7.3 ) What is displayed by the following R commands? <br/>
+> x = (1:10)^2 <br/>
+> diff(range(x))
+
+```{r}
+x = (1:10)^2
+diff(range(x))
+```
+
+
+Exercise 7.4 ) What is displayed by the following R commands? <br/>
+> x = 1:4 <br/>
+> y = 4:1 <br/>
+> pmax(x, y)
+
+```{r}
+x = 1:4
+y = 4:1
+pmax(x, y)
+```
