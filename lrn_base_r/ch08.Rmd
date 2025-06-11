@@ -10,3 +10,40 @@ reverse = function(x) x[length(x):1]
 x = 1:10
 reverse(x)
 ```
+
+
+Exercise 8.2 ) Write a function named cube.root that calculates the cube root(s) of its argument.  Test your function with R command
+> cube.root(c(-8, 8, 729, 1000000)) <br/>
+
+```{r}
+cube.root = function(x) x^(1/3)
+cube.root(c(-8, 8, 729, 1000000))
+```
+
+
+Exercise 8.3 )  Consider the sample data values $x_1, x_2, ..., x_n$ and the assocaiated sample order statistics $x_{(1)}, x_{(2)}, ..., x_{(n)}$.  The sample truncated mean (also known as sample trimmed mean) is a measure of central tendency defined as $$\bar x = \dfrac{x_{(k+1)} + x_{(k+2)} + ... + x_{(n-k)}}{n - 2k}$$
+This is the arithmetic average of the data values with the k lowest and k hightest observations removed.  The  truncated mean is less sensitive to outliers than the arithmetic mean and is hence known as a robust estimator.  This estimator is used in sports that are evaluated by a panel of n judges in which the lowest and highest scores (k = 1) are discarded.  Likewise, the truncated mean is used in calculating the London Interbank Offered Rate (LIBOR) in which n = 18 interest rates are collected, and the lowest four and highest four interest rates (k = 4) are discarded.  Assuming that k < n/2, write an R function named tmean with two arguments x and k that calculates the sample truncated mean of the elements in the vector x discarding the k lowest and k highest observations.  Test your code with the R commands
+> tmean(c(9.4, 9.6, 9.1, 9.5, 9.3), 1) <br/>
+> tmean(1:18, 4) <br/>
+
+```{r}
+tmean = function(x, k) {
+  return ((sort(x))[k+1:(length(x)-k*2)])
+}
+
+tmean(c(9.4, 9.6, 9.1, 9.5, 9.3), 1) 
+tmean(1:18, 4)
+```
+
+
+Exercise 8.4 ) The R vector x is comprised of n elements $x_1, x_2, ..., x_n$.  Write an R function named my.mad (for sample mean absolute deviation) with a single argument x that calculates and returns $$\dfrac{1}{n} \sum_{i=1}^{n} |x_i - \bar x|,$$ where $\bar x$ is the sample mean.  Do not use the built-in R function mad.
+
+```{r}
+my.mad = function(x) {
+  s = mean(x)
+  return (mean(abs(x - s)))
+}
+
+x = 1:20
+my.mad(x)
+```
