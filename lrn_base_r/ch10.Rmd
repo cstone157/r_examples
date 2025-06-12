@@ -1,0 +1,11 @@
+---
+Learning Base R
+Chapter 10
+---
+
+
+Exercise 10.1 ) Write an R command that calculates the product of the complex numbers 2 - 3i and 3 + 4i.  Check the correctness of the result by hand.
+```{r}
+2 - 3i
+4 + 4i
+```
