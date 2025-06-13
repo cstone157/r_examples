@@ -11,3 +11,12 @@ x
 x[2:3, c(1, 3), 2]
 ```
 
+
+Exercise 6.2 ) True or false: A matrix is a special case of an array.
+TRUE
+
+
+Exercise 6.3 ) 
+```{r}
+
+```

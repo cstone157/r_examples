@@ -1,0 +1,14 @@
+---
+Learning Base R
+Chapter 11
+---
+
+
+Exercise 11.1 ) Create a 5x5x2 array named abb of U.S. state abbreviations.  Then use the substr function to create a second 5x5x2 array named abb1 whose elements are the first letters of each associated string in abb.
+```{r}
+abb = array(state.abb, dim=c(5, 5, 2))
+abb
+
+abb1 = substr(abb, 1, 1)
+abb1
+```
