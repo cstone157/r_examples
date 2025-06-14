@@ -1,0 +1,68 @@
+---
+Machine Learning with R
+Chapter 02 - Managing and Understanding Data
+---
+
+### Vectors
+
+```{r}
+# - Contruct a set of vectors containing data on three medical patients
+subject_name <- c("John Doe", "Jane Doe", "Steve Graves")
+temperature <- c(98.1, 98.6, 101.4)
+flu_status <- c(FALSE, FALSE, FALSE)
+
+# - Vectors retain order
+temperature[2]
+temperature[2:3]
+temperature[-2]
+temperature[c(TRUE, TRUE, FALSE)]
+```
+
+### Factors
+ 
+```{r}
+# - A factor is special case of vector that is solely used for representing categorical or ordinal variables.
+# - To create a factor from a character vector, simply apply the factor() function.
+
+gender <- factor(c("MALE", "FEMALE", "MALE"))
+gender
+
+blood <- factor(c("O", "AB", "A"), levels=c("A", "AB", "O"))
+blood
+
+# - We can indicate the presence of ordinal data by providing the factor's levels in the disired order
+symptoms <- factor(c("SEVERE", "MILD", "MODERATE"), levels=c("MILD", "MODERATE", "SEVERE"), ordered=TRUE)
+symptoms
+symptoms > "MODERATE"
+```
+
+### Lists
+
+```{r}
+# - Like a vecotr, stores a ordered collection of data, but can store mixed formats.
+
+subject_name[1]
+temperature[1]
+flu_status[1]
+gender[1]
+blood[1]
+symptoms[1]
+
+subject1 <- list(
+  fullname = subject_name[1],
+  temperature = temperature[1],
+  flu_status = flu_status[1],
+  gender = gender[1],
+  blood = blood[1],
+  symptoms = symptoms[1]
+
+)
+```
+
+
+### Template
+
+```{r}
+```
+
+
