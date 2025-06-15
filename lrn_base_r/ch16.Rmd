@@ -1,0 +1,21 @@
+---
+Learning Base R
+Chapter 16
+---
+
+
+Exercise 16.1 ) What is displayed by the following R commands?  (Waking hours from wikipedia.)
+```{r}
+creatures = c("dog", "cat", "armadillo", "human")
+friendly = c(TRUE, TRUE, FALSE, TRUE)
+diet = c("cat", "mice", "termites", "Twinkies(tm)")
+waking.hours = c(13.9, 11.5, 5.9, 16.0)
+creature.data = data.frame(friendly, diet, waking.hours, row.names = creatures)
+creatures[creature.data$waking.hours < 12 & ! creature.data$friendly]
+```
+
+
+Exercise 16.2 ) Write a single R command that alphabetizes the rows of the data frame creature.data from Exercise 16.1 by creature name?
+```{r}
+creature.data[order(rownames(creature.data)), ]
+```
