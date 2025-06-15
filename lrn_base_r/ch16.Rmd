@@ -19,3 +19,35 @@ Exercise 16.2 ) Write a single R command that alphabetizes the rows of the data 
 ```{r}
 creature.data[order(rownames(creature.data)), ]
 ```
+
+
+Exercise 16.3 ) For the creature.data frame in Exercise 16.1, use the R subset function to create a data frame consisting of just the creature name and diet associated with friendly creatures who are awake more than 12 hours a day.
+```{r}
+creature.data[creature.data$waking.hours >= 12, ]
+```
+
+
+Exercise 16.4 ) Consider the creature.data data frame in Exercise 16.1
+ a.) Write two different R commands that extract the waking hours for a dog.
+ b.) Write two different R commands that extract the waking hours for all creatures.
+ c.) Write two different R commands that create a data frame that only consists of the rows for dogs and armadillos.
+ d.) Write an R command that creates a data frame that consists only of friendly creatures.
+```{r}
+# a.)
+dog <- creature.data["dog", ]
+dog$waking.hours
+
+# b.)
+waking_hrs <- creature.data$waking.hours
+waking_hrs
+
+
+# c.)
+dog_armadillo <- creature.data[rownames(creature.data) %in% c("dog", "armadillo"), ]
+dog_armadillo
+
+# d.)
+friendly <- creature.data[creature.data$friendly, ]
+friendly
+
+```
