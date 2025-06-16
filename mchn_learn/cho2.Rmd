@@ -57,6 +57,60 @@ subject1 <- list(
   symptoms = symptoms[1]
 
 )
+
+subject1
+
+subject1[2]
+subject1[[2]]
+subject1$temperature
+subject1[c("temperature", "flu_status")]
+```
+
+
+### Data frames
+
+```{r}
+# - a dataframe is similar to a excel spreadsheet
+
+pt_data <- data.frame(subject_name, temperature, 
+                      flu_status, gender, blood, symptoms,
+                      stringsAsFactors = FALSE)
+pt_data
+
+# - dataframes are two dimetions
+pt_data$subject_name
+pt_data[c("temperature", "flu_status")]
+
+# - extract first row and second column
+pt_data[1, 2]
+
+# - you can use vectors to select multiple rows/columns
+pt_data[c(1, 3), c(2, 4)]
+
+# - extract the first column
+pt_data[, 1]
+
+# - extract the first row
+pt_data[1, ]
+
+# - extracting everything
+pt_data[,]
+
+# - or
+pt_data[c(1, 3), c("temperature", "gender")]
+
+# - negative numbers can be used to exclude data
+pt_data[-2, c(-1, -3, -5, -6)]
+
+# - create new columns
+pt_data$temp_c <- (pt_data$temperature -32) * (5 /9)
+pt_data[c("temperature", "temp_c")]
+```
+
+
+### Matrices and arrays
+
+```{r}
 ```
 
 
@@ -64,5 +118,3 @@ subject1 <- list(
 
 ```{r}
 ```
-
-
