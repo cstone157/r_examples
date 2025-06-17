@@ -111,6 +111,66 @@ pt_data[c("temperature", "temp_c")]
 ### Matrices and arrays
 
 ```{r}
+# - A matrix is a data structure that represents a two dimensional table
+
+m <- matrix(c(1, 2, 3, 4), nrow=2)
+m
+
+# Alternatively
+
+m <- matrix(c(1, 2, 3, 4), ncol=2)
+m
+
+m <- matrix(c(1, 2, 3, 4, 5, 6), nrow=2)
+m
+
+m <- matrix(c(1, 2, 3, 4, 5, 6), ncol=2)
+m
+
+# You can extract value using [row, col]
+m[1, ]
+m[, 1]
+```
+
+
+## Managing data with R
+
+### Saving, loading, and removing R data structures
+
+```{r}
+# - Save three objects: x, y, z to a file
+# > save(x, y, z, file="mydata.RData")
+
+# - Load the data using load
+# > load("mydata.RData")
+
+# List all of the data structures that are in the current session with ls()
+ls()
+
+# Remove data from session, like x and y
+# > rm(x, y)
+
+# You can also supply a vector of object names
+rm(list = ls())
+```
+
+
+### Importing and saving data from CSV files
+
+```{r}
+# - tablular data (csv)
+
+# - Reading a csv file into memory
+# > pt_data <- read.csv("pt_data.csv", stringsAsFactors=FALSE)
+# > pt_data <- read.csv("pt_data.csv", stringsAsFactors=FALSE, header=FALSE)
+# > write.csv(pt_data, file="pt_data.csv", row.names=FALSE)
+```
+
+
+### Exploring and understanding data
+
+```{r}
+usedcars <- read.csv("usedcars.csv", stringsAsFactors = FALSE)
 ```
 
 
