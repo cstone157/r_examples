@@ -174,6 +174,117 @@ usedcars <- read.csv("usedcars.csv", stringsAsFactors = FALSE)
 ```
 
 
+### Exploring the structure of data
+
+```{r}
+# - data dictionary - a document that describes the dataset's features
+
+str(usedcars)
+
+#- the variables statements refers to the six features that were recorded.
+```
+
+
+### Exploring numeric variables
+
+```{r}
+# - summary statitsics, summary () function displays several common summary statistics
+summary(usedcars$year)
+
+# - By supplying a vector of column names, to obtain summary statistics for several numeric variables at the same time:
+summary(usedcars[c("price", "mileage")])
+```
+
+
+### Measuring the central tendency - mean and median
+
+```{r}
+(36000 + 44000 + 56000) / 3
+
+# R's provided mean function
+mean(c(36000, 44000, 56000))
+
+# R's provided median function
+median(c(36000, 44000, 56000))
+
+```
+
+
+### Measuring spread - quartiles and the five-number summary
+
+```{r}
+# - summary statistics with the spread of data, or how tightly or loosely the values are spaces
+# - five-number summary is a set of five statistics that roughly depict the spread of feature's values.
+
+range(usedcars$price)
+
+diff(range(usedcars$price))
+
+# - quartiles: data is divided into 4 portions (also tertiles, quintiles, deciles, percentiles)
+# - difference between Q1 and Q3 is known as interquartile range (IQR)
+
+IQR(usedcars$price)
+
+
+quantile(usedcars$price)
+
+quantile(usedcars$price, probs=c(0.01, 0.99))
+
+# - the sequence function seq generates vectors of evenly-spaced values
+
+quantile(usedcars$price, probs=seq(from=0, to=1, by=0.20))
+```
+
+
+### Visualizing numeric variables - boxplots
+
+```{r}
+# common visualization of the five-number summar is a boxplot, also known as box-and-whisker plot
+boxplot(usedcars$price, main="Boxplot of Used Car Prices", ylab="Price ($)")
+
+boxplot(usedcars$mileage, main="Boxplot of Used Car Mileage", ylab="Odometer (mi.)")
+```
+
+
+### Visualizing numeric variables - histograms
+
+```{r}
+# - A histogram is another way to visualize the spread of a numeric variable.
+
+hist(usedcars$price, main="Histogram of Used Car Prices", xlab="Price ($)")
+
+hist(usedcars$mileage, main="Histogram of Used Car Mileage", xlab="Odometer (mi.)")
+
+# - Right skew, no skew, left skew
+```
+
+### Understanding numeric data - uniform and normal distributions
+
+
+### Template
+
+```{r}
+```
+
+
+### Template
+
+```{r}
+```
+
+
+### Template
+
+```{r}
+```
+
+
+### Template
+
+```{r}
+```
+
+
 ### Template
 
 ```{r}
