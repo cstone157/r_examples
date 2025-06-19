@@ -258,30 +258,81 @@ hist(usedcars$mileage, main="Histogram of Used Car Mileage", xlab="Odometer (mi.
 # - Right skew, no skew, left skew
 ```
 
+
 ### Understanding numeric data - uniform and normal distributions
 
+- Uniform Distribution
+- Normal Distribution
 
-### Template
+
+### Measuring spread - variance and standard deviation
 
 ```{r}
+# - variance Var(x) = (1/n) sum(x[i] - mean(x))
+# - standard deviation stddev(x) = sqrt(var(x))
+
+var(usedcars$price)
+sd(usedcars$price)
+var(usedcars$mileage)
+sd(usedcars$mileage)
+
 ```
 
 
-### Template
+### Exploring categorical variables
+
 
 ```{r}
+# - used car dataset contains three categorical variables model, color, and transmission
+table(usedcars$year)
+table(usedcars$model)
+table(usedcars$color)
+
+# calculation of table proportions directly
+model_table <- table(usedcars$model)
+prop.table(model_table)
+
+# Results of prop.table can be combined to transform the output.  Display the results in percentages with a sincel decimal place.
+color_table <- table(usedcars$color)
+color_pct <- prop.table(color_table) * 100
+round(color_pct, digits = 1)
 ```
 
 
-### Template
+### Measuring the central tendency - the mode
+
+- Unimodal
+- Bimodal
+- Multimodal
+
+
+### Exploring relationships between variables
+
+- Does the price and mileage data imply that we are examining only economy-class cars
+- Quesions like this can be addressed by looking at bivariate relationsips (or multivariate if more than two variables.)
+
+
+### Visualizing relationships - scatterplots
 
 ```{r}
+plot(x = usedcars$mileage, y = usedcars$price,
+     main = "Scatterplot of Price vs. Mileage",
+     xlab = "Used Car Odometer (mi.)",
+     ylab = "Used Car Price ($)")
 ```
 
 
-### Template
+### Examining relationships - two-way cross-tabulations
 
 ```{r}
+# - two-way cross-tabulation is used (also known as a crosstab or contingency table).
+install.packages("gmodels")
+
+usedcars$conservative <- usedcars$color %in% c("Black", "Gray", "Silver", "White")
+table(usedcars$conservative)
+CrossTable(x = usedcars$model, y = usedcars$conservative)
+
+# - Person's chi-squared test for independence between two variables.  This test measures how likely it is that the difference in cell counts
 ```
 
 
