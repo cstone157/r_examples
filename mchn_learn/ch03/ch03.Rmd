@@ -1,0 +1,63 @@
+---
+Machine Learning with R
+Chapter 03 - lazy Learning - classification Using Nearest Neighbors
+---
+
+### Understanding nearest neighbor classification
+
+- nearest neighbor classifiers are defined by their characteristic of classifying unlabled examples by assigning them the class of similar labeled examples.
+- examples
+  - Computer vision applications
+  - Recommendation systems that predict whether a person will enjoy a movie or song
+  - Identifying patterns in genetic data to detect specific proteins / diseases.
+  
+
+### The k-NN algorithm
+
+- k-nearest-neighbors algorithm (k-NN), is a classification example
+- Strengths
+  - Simple and effective
+  - Makes no assumptions
+  - Fast training phase
+- Weaknesses
+  - does not produce a model, limiting the ability to understand how the features are related to the class
+  - requires selection of an appropriate k
+  slow classification phase
+  - Nominal features and missing data require additional processing
+
+### Measuring similarity with distance 
+
+  - Locating the nearest neighbor requires a distance function
+  - Example functions
+    - Euclidean distance
+      - dist(p,q) = sqrt((p[1] - q[1])^2 + (p[2] - q[2])^2 + ... + (p[n] - q[n])^2)
+    - Manhattan distance
+    
+
+### Choosing an appropriate k
+  - The balance between over-fitting and under-fitting the training data is a problem know as bias-variance tradeoff.
+  - Choose a large k reduces the impact or variance caused by noisy data, but can bias the learner such that it runs the risk of ignoring small, but important patterns.
+
+### Preparing data for use with k-NN
+
+  - The traditional method of rescaling features for k-NN is min-max normilization.
+    - x[new] = (x - min(x))/(max(x) - min(x))
+  - Z-score standardization
+    - z-scores fall into an unbounded range of negative and positive number.
+    - x[new] = (X - mean(X))/stddev(X)
+  - Dummy coding: process of converting a categorical variable into a numberic values
+  - One-hot encoding: where each category is converted into it's own columns that is 1 or 0
+
+### Vectors
+
+### Vectors
+
+### Vectors
+
+### Vectors
+
+### Vectors
+
+```{r}
+# - 
+```
