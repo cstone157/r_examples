@@ -40,21 +40,98 @@ Chapter 03 - lazy Learning - classification Using Nearest Neighbors
 
 ### Preparing data for use with k-NN
 
-  - The traditional method of rescaling features for k-NN is min-max normilization.
+  - The traditional method of re-scaling features for k-NN is min-max normalization.
     - x[new] = (x - min(x))/(max(x) - min(x))
   - Z-score standardization
     - z-scores fall into an unbounded range of negative and positive number.
     - x[new] = (X - mean(X))/stddev(X)
-  - Dummy coding: process of converting a categorical variable into a numberic values
+  - Dummy coding: process of converting a categorical variable into a numeric values
   - One-hot encoding: where each category is converted into it's own columns that is 1 or 0
 
-### Vectors
+### Why is the k-NN algorithm lazy?
+
+  - No abstraction is involved in the k-NN,
+  - Under the strict definition of learning, a lazy learner is not really learning anything.  Instead, it merely stores the training data verbatim.
+
+## Example - diagnosing breast canver with k-NN
+
+  - If machine learning could automate the identification of cancerous cells, it would provide considerable benefits of the health system.
+
+### Step 1 - collection data
+
+  - The data set utilized is the Breast Cancer Wisconsin (Diagnostic) dataset from the UCI Machine Learning Repository at http://archive.ics.uci.edu/ml
+  - The data include 569 examples of cancer biopsies, each with 32 features.
+  The 30 numeric measurements comprise the mean, standard error and worst value (largest) for 10 different characteristics of the digitized cell nuclei.
+    - Radius, Texture, Perimeter, Area, Smoothness, Compactness, Concavity, Concave points, Symmetry, Fractal dimension, 
+
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - Begin by importing the CSV data file
+wbcd <- read.csv("wisc_bc_data.csv", stringsAsFactors = FALSE)
+
+# - Use the str command to confirm that the data is structured
+str(wbcd)
+
+# - Let's drop the id feature altogether.
+wbcd <- wbcd[-1]
+
+# - The variable diagnosis, is the outcome we want to predict
+table(wbcd$diagnosis)
+
+# - MOur R machine learning classifiers require the target feature to be coded as a factor.  recode the diagnosis variables
+wbcd$diagnosis <- factor(wbcd$diagnosis, levels = c("B", "M"), labels = c("Benign", "Malignant"))
+
+# - When we look at the prop.table() output, we now find that values have been Benign and Malignant.
+round(prop.table(table(wbcd$diagnosis)) * 100, digits = 1)
+
+# - The remaining 30 features are all numeric and, as expected, consist of three different measurements of 10 characteristics.
+summary(wbcd[c("radius_mean", "area_mean", "smoothness_mean")])
+```
+
+
+### Transformation - normalizaing numeric data
+
+```{r}
+# - 
+```
+
 
 ### Vectors
 
-### Vectors
+```{r}
+# - 
+```
+
 
 ### Vectors
+
+```{r}
+# - 
+```
+
+
+### Vectors
+
+```{r}
+# - 
+```
+
+
+### Vectors
+
+```{r}
+# - 
+```
+
+
+### Vectors
+
+```{r}
+# - 
+```
+
 
 ### Vectors
 
