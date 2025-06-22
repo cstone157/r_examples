@@ -1,0 +1,48 @@
+---
+Machine Learning with R
+Chapter 04 - Probabilistic Learning - Classification Using Naive Bays
+---
+
+  - Naive Bays algorithm, uses probabilities:
+
+### Understanding Naice Bayes
+  - Bayesian methods
+  - Classifiers based on Bayesian methods utilize training data to calculate the probability of each outcome based on the evidence provided by feature values.
+  - Bayesian classifiers have been used for:
+    - text classification, intrustion or anomaly detection, or diagnosing medical conditions
+
+#### Basic concepts of Bayesian methods
+  - Bayesian probability theory is rooted in the idea that the estimated likelihood of an <b>event</b>, or potential outcome, should be based on  the evidence at hand across multiple <b>trials</b>, or opportunities for the event to occur.
+
+### Understanding probability
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Understanding Naice Bayes
+  - 
+
+### Vectors
+
+```{r}
+# - 
+```
