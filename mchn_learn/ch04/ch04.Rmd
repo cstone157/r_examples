@@ -15,33 +15,185 @@ Chapter 04 - Probabilistic Learning - Classification Using Naive Bays
   - Bayesian probability theory is rooted in the idea that the estimated likelihood of an <b>event</b>, or potential outcome, should be based on  the evidence at hand across multiple <b>trials</b>, or opportunities for the event to occur.
 
 ### Understanding probability
-  - 
+  - The probability of an event is estimated from observed data by dividing the number of trials n which the event occurred by the total number of trials.
+  - The probability of all possible outcomes of a trial must always sum to one.
+  - Mutually exclusive and exhaustive events : implies that events cannot occur at the same time and are the only possible outcomes.
+  - Complement - an event comprising the outcomes in which the event of interest does not happen.
 
-### Understanding Naice Bayes
-  - 
+### Understanding joint probability
+  - Certain events occur concurrently.  For instance, the probability of an email being spam that contains the word "Viagra".
+  - Venn diagram, diagram of circles to illustrate the overlap between sets of items.
+  - Intersection: the probability of two events occurring, for instance is an email spam (P(S)) and also contains the word "Viagra" (P(V)).
+  - Joint probability : the probability of one event is related to the probability of the other.
+  - Independent events : two events are totally unrelated
+  - Dependent events : probability of one event is based on the other event.
 
-### Understanding Naice Bayes
-  - 
+### Computing conditional probability with Bayes' theorem
+  - Bayes' theorem - provides a way of thinking about how to revise an estimate of the probability of one event in light of the evidence provided by another:
+    - P(A|B) = P(A intersect B)/P(B)
+    - P(A|B) = P(A intersect B)/P(B) = P(B|A)*P(A)/P(B)
+  - Conditional probability : probability of A is dependent (or conditional) on what happened with event B.
+  - Prior probability - probability without knowledge of next event
+  - Probability is also called likelihood
+  - Marginal likelihood - the probability of B occurring, without regard to A
+  - Frequency table - records the number of times events have occurred.
+  - Likelihood table - records the likelihood of an event occurring given A.
 
-### Understanding Naice Bayes
-  - 
+### The Naive Bayes algorithm
+  - The <b>Naive Bayes</b> algorithm defines a simple method to apply Bayes' theorem to classification. problems.
+  - The Naive Bayes algorithm is names as such because it makes some "naive" assumption about the data.
+    - It assumes all of the features in the dataset are <b>equally important and independent</b>
 
-### Understanding Naice Bayes
-  - 
+### Classification with Naive Bayes
+  - <b>Class-conditional Independence</b> : events are independent so long as they are conditioned on the same class value.
+  - The conditional independence assumption allows us to use the probability rule for independent events, which states that P(A intersect B) = P(A) * P(B).
 
-### Understanding Naice Bayes
-  - 
+### The Laplace estimator
+  - If an event never occurs for one or more levels of the class and therefore their joint probability is zero.
+  - Because probabilities in Naive Bayes formula are multiplied in a chain, this zero percent value causes the posterior probability of spam to be zero, effectively nullifies and overrules all of the other evidence.
+  - Solution is the Laplace estimator.  The Laplace estimator adds a small number to each of the counts in the frequency table, which ensures that each feature has a non-zero probability of occurring with each class.
 
-### Understanding Naice Bayes
-  - 
+### Using numeric features with Naive Bayes
+  - Naive Bayes uses frequency tables for learning the data, which means that each feature must be categorical.
+  - To allow for using numeric data, on solution is to <b>discretize</b> numeric features, which simply means that numbers are put into categories known as <b>bins</b>.  Sometimes called <b>binning</b>.
+  - One easiest way is to explore the data for natural categories or <b>cut points</b> in the distribution.
+  
+## Example - filtering mobile phone spam with the Naive Bayes algorithm
 
-### Understanding Naice Bayes
-  - 
+### Step 1 - collecting data
+  - To develop the Naive Bayes classifier, use the SMS Spam Collection at http://www.dt.fee.unicamp.br/~tiago/smsspamcollection/ (doesn't seem to exist).
 
-### Understanding Naice Bayes
-  - 
+### Step 2 - exploring and preparing the data
 
-### Vectors
+```{r}
+# - We will transform our data into a representation known as bag-of-words, which ignores word order and simply provides a variable indicating whether the word appears at all.
+
+# We'll begin by import csv data
+sms_raw <- read.csv("sms_spam.csv", stringsAsFactors = FALSE)
+str(sms_raw)
+
+# - Convert type to categorical
+sms_raw$type <- factor(sms_raw$type)
+
+str(sms_raw$type)
+table(sms_raw$type)
+```
+
+#### Data preparation - cleaning and standardizing text data
+
+```{r}
+# - SMS message are strings of text composed of words, spaces, numbers, and punctuation.
+# - One needs to remove number and punctuation; hand uninteresting words such as and, but, and or; and how to break apart sentences into individual words.
+# - We are going to use the tm package to handle our NLP tasks
+install.packages("tm")
+library(tm)
+
+# - first step in processing text data involves creating a corpus
+#- Use VCorpus function, which refers to a volatile corpus (volatile refers to that fact that is is only stored in active memory).
+# - We'll use VectorSource() reader function to create a source object from the existing sms_raw$text
+sms_corpus <- VCorpus(VectorSource(sms_raw$text))
+
+# - By printing the corpus, we see that it contains documents for each of the 5559 SMS messages
+print(sms_corpus)
+
+# - we can use list operations to select documents
+inspect(sms_corpus[1:2])
+
+# - Use character() function to view the actual message
+as.character(sms_corpus[[1]])
+
+# - Use lapply to apply as.character to multiple items
+lapply(sms_corpus[1:2], as.character)
+
+# - to perform our analysis, we need to divide these messages into individual words.
+# - First, we will clean the text to standardize the words and remove punctuation characters.  For instance "Hello!", "HELLO", and "hello" should be counted as the same word.
+#   - Our first transformation change messages to only use lowercase characters.
+sms_corpus_clean <- tm_map(sms_corpus, content_transformer(tolower))
+
+# - Check if the command worked
+as.character(sms_corpus[[1]])
+as.character(sms_corpus_clean[[1]])
+
+# - Second remove the numbers
+sms_corpus_clean <- tm_map(sms_corpus_clean, removeNumbers)
+
+# - Third remove filler (stop) words like 'to', 'and', 'but', and 'or'
+#   - Use the existing stopwords function from the tm package.
+#   - Use the removeWords() function in tm to accomplish this
+sms_corpus_clean <- tm_map(sms_corpus_clean, removeWords, stopwords())
+
+# - Fourth eliminate punctuation from text
+sms_corpus_clean <- tm_map(sms_corpus_clean, removePunctuation)
+
+# example of removePunctuation
+removePunctuation("hello...world")
+
+# - Stemming is the process of reducing words to their root form.  It takes words like learned, learning, and learns and strips the suffix in order to transform them into base form, learn.
+install.packages("SnowballC")
+library(SnowballC)
+# - Example of stemming using snwoball
+wordStem(c("learn", "learned", "learning", "learns"))
+# - Apply wordStem function to an entire corpus of text documents
+sms_corpus_clean <- tm_map(sms_corpus_clean, stemDocument)
+
+# - Finally, strip additional black spaces from the text
+sms_corpus_clean <- tm_map(sms_corpus_clean, stripWhitespace)
+
+# - Compare the first three messages after transformation
+as.character(sms_corpus[[1]])
+as.character(sms_corpus_clean[[1]])
+
+as.character(sms_corpus[[2]])
+as.character(sms_corpus_clean[[2]])
+
+as.character(sms_corpus[[3]])
+as.character(sms_corpus_clean[[3]])
+
+```
+
+### Data preperation - splitting text documents into words
+
+```{r}
+# - 
+```
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - 
+```
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - 
+```
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - 
+```
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - 
+```
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - 
+```
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - 
+```
+
+### Step 2 - exploring and preparing the data
 
 ```{r}
 # - 
