@@ -1,0 +1,127 @@
+---
+Machine Learning with R
+Chapter 05 - Divide and Conquer - Classification Using Decision Trees and Rules
+---
+
+## Understanding decision trees
+
+  - Decision tree learners are powerful classifiers that utilize a tree structure to model the relationships among the features and the potential outcomes.
+  - Bottom of a decision tree is a root node, event travels through decision nodes that require choices to be made base on the attributes of the event.
+  - The choice split the data across branches that indicate potential outcomes of a decision.
+  - If a final decision can be made, the tree is terminated by leaf nodes (also known as terminal nodes).
+  - One of the benefits of a decision tree is that the resulting structure can be output into a human-readable format.
+
+### Divide and conquer
+
+  - Decision trees are built using a heuristic called <b>recursive partitioning</b>, also known as <b>divide and conquer</b>.
+  - It splits the dat into subsets, which are then split repeatedly into even small subsets, and so on.  This process stops when the algorithm determines the data within the subsets are sufficiently homogeneous, or another stopping criterion has been met.
+
+### The C5.0 decision tree algorithm
+
+  - <b>C5.0 algorithm</b> is an improved version of <b>C4.5 algorithm</b>, which itself is an improvement over <b>Iterative Dichotomiser 3 (ID3)</b> algorithm.
+  - C5.0 algorithm is the industry standard for production decision trees, because it does well for most types of problems directly out of the box.
+    - Strengths
+      - All-purpose classifier
+      - Highly automatic learning process
+      - Excludes unimportant features
+      - Can be used on small and large datasets
+      - results in a model that can be interpreted
+      - More efficient than other complex models
+    - Weaknesses
+      - Decision tree models are often biased towards splits on features haveing a large number of levels
+      - It is easy to overfit or underfit
+      - Can have trouble modeling some relationships do to reliance on axis-parallel splits
+      - Small changes in training data can result in large changes
+      - Large trees can be difficult to interpret and the decisions they make may seem counterintuitive
+
+### Choosing the best split
+
+  - First challenge in a decision tree is identifying which features to split on.
+  - Purity : the degree to which a subset of examples contain only a single class
+  - Pure : anysubset compose of only a single class
+  - <b>C5.0</b> uses entropy, a concept borrowed from information theory that quantifies the randomness, or disorder, within a set of class values.
+    - Sets with high entropy are very diverse.
+    - Entropy is meansured in <b>bits</b>.  For n classes, entropy ranges from - to log2(n).
+      - Entropy is specified as Entropy (S) = sum(-p[i] * log2(p[i]))
+```{r}
+# - Example, we have a partition of data with two classes : red (60 percent) and white (40 percent)
+-0.60 * log2(0.60) - 0.40 * log2(0.40)
+
+# - We can visualize the entropy for all possible two-class arrangements:
+curve(-x * log2(x) - (1 - x) * log2(1 - x), 
+      col = "red", xla = "x", ylab = "Entropy", lwd = 4)
+```  
+
+  - To use entropy to determine the optimal feature to split upon, the algorithm calculates the changes in homogeneity that would result from a split on each possible feature, a measure known as <b>information gain</b>.
+    - InfoGain(F) = Entropy(S1) - Entropy(S2)
+  - The function to calculate Entropy needs to consider the total entropy across all the partitions.  It does this by weighting each partition's entropy according to the proportion of all records falling into partition.
+    - Entropy(S) = sum(w[i] * Entropy(P[i]))
+  - The higher the information gain, the better a feature is at creating homogeneous groups after a split on that feature.  If information gain is zero, there is no reduction in entropy for splitting on on this feature.
+
+### Pruning the decision tree
+
+  - If the tree groups overly large, many of the decision it makes will be overly specific and the model will be overfitted to the training data.
+  - <b>Pruning</b> is the process of reducing it's size such that it generalizes better to unseen data.
+  - One solution is to stop the tree from growing once it reaches a certain number of decisions.  This is called <b>early stopping</b> or <b>pre-pruning</b> the decision tree.
+  - <b>Post-pruning</b> involves growing a tree that is intentionally too large and pruning leaf nodes to reduce the size of the tree to a more appropriate level.  This is often more effective.
+  - The C5.0 algorithm is opinionated about pruning - it takes care of many of the decisions automatically.
+  - The process of grafting branches is known as <b>sub-tree raising</b> and <sub-tree replacement</b>.
+
+## Example - identifying risky bank loans using C5.0 decision trees
+
+### Step 1 - collecting data
+
+  - Data for this example is the dataset donated to the UCI Machine Learning Repository http://archive.ics.uci.edu/ml
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# - Load the data, because the character data is entirely categorical, we can omit stringsAsFactors
+credit <- read.csv("credit.csv")
+
+# - check our resulting object
+str(credit)
+
+# - Use table() to check the output for a couple of loan features
+table(credit$checking_balance)
+table(credit$savings_balance)
+
+# - Some of the loan's features are numeric
+summary(credit$months_loan_duration)
+summary(credit$amount)
+
+# - The default vector indicates whether the loan was able to meet the agreed payment terms or if they went into default.
+table(credit$default)
+```
+
+### Template
+
+```{r}
+# - 
+```
+
+
+### Template
+
+```{r}
+# - 
+```
+
+
+### Template
+
+```{r}
+# - 
+```
+
+
+### Template
+
+```{r}
+# - 
+```
+
+### Template
+
+  - 
+
