@@ -85,7 +85,7 @@ table(sms_raw$type)
 # - SMS message are strings of text composed of words, spaces, numbers, and punctuation.
 # - One needs to remove number and punctuation; hand uninteresting words such as and, but, and or; and how to break apart sentences into individual words.
 # - We are going to use the tm package to handle our NLP tasks
-install.packages("tm")
+#install.packages("tm")
 library(tm)
 
 # - first step in processing text data involves creating a corpus
@@ -129,7 +129,7 @@ sms_corpus_clean <- tm_map(sms_corpus_clean, removePunctuation)
 removePunctuation("hello...world")
 
 # - Stemming is the process of reducing words to their root form.  It takes words like learned, learning, and learns and strips the suffix in order to transform them into base form, learn.
-install.packages("SnowballC")
+#install.packages("SnowballC")
 library(SnowballC)
 # - Example of stemming using snwoball
 wordStem(c("learn", "learned", "learning", "learns"))
@@ -154,47 +154,140 @@ as.character(sms_corpus_clean[[3]])
 ### Data preperation - splitting text documents into words
 
 ```{r}
-# - 
+# - The final step is to split the messages into individual terms through a process called tokenization
+# - The DocumentTermMatrix function takes a corpus and create a data structure called document-term matrix (DTM), in which rows indicate documents and columns indicate terms (words)
+# - Sparse matrix : the vast majority of cells in the matrix are filled with zeros (since many words only show up once or twice)
+# - Create a DTM sparse matrix
+sms_dtm <- DocumentTermMatrix(sms_corpus_clean)
+
+# - You can also use the DTM to perform all of the data cleaning we already did.
+sms_dtm2 <- DocumentTermMatrix(sms_corpus, control = list(
+  tolower = TRUE,
+  removeNumbers = TRUE,
+  stopwords = TRUE,
+  removePunctuation = TRUE,
+  stemming = TRUE
+))
+
+# - check for the differences between the sms_dtm and sms_dtm2
+sms_dtm
+sms_dtm2
+
+# - The reason for the discrepancies has to do with minor difference in the ordering of preprocessing steps.
 ```
 
-### Step 2 - exploring and preparing the data
+### Data preparation - creating training and test datasets
 
 ```{r}
-# - 
+# - Split the data into training and test datasets.
+# - Divide the data into two portions: 75 percent for training and 25 percent for testing.
+sms_dtm_train <- sms_dtm[1:4169, ]
+sms_dtm_test <- sms_dtm[4170:5559, ]
+
+# save a pair of vectors with the labels for each of rows in the training and testing matrices.
+sms_train_labels <- sms_raw[1:4169, ]$type
+sms_test_labels <- sms_raw[4170:5559, ]$type
+
+# - confirm that subsets are representative of the complete set of SMS data
+prop.table(table(sms_train_labels))
+prop.table(table(sms_test_labels))
 ```
 
-### Step 2 - exploring and preparing the data
+### Visualizing text data - word clouds
 
 ```{r}
-# - 
+# - A word cloud is a way to visually depict the frequency at which words apper in text data.
+# - Install the wordcloud package
+#install.packages("wordcloud")
+library(wordcloud)
+
+# - create a word cloud dirctly from a tm corpus
+wordcloud(sms_corpus_clean, min.freq = 50, random.order = FALSE)
+
+# - Let's use R's subset() function to take a subset of sms_raw data by the SMS type.
+spam <- subset(sms_raw, type == "spam")
+ham <- subset(sms_raw, type == "ham")
+
+# - Create word clouds from both 
+# - TODO : Erroring out, skipping for now
+#wordcloud(spam$text, max.words = 40, scale = c(c, 0.5))
+#wordcloud(ham$text, max.words = 40, scale = c(c, 0.5))
 ```
 
-### Step 2 - exploring and preparing the data
+### Data preparation - creating indicator features for frequent words
 
 ```{r}
-# - 
+# - The final step of data preparation process is to transform the sparse matrix into a data structure that can be used to train a Naive Bayes classifier.
+# - Most of the words don't appear often enough to be useful, so we'll remove anywords that appear in less than five messages (about 0.1 percent of the records).
+# - Use findFreqTerms() function to find frequent words
+findFreqTerms(sms_dtm_train, 5)
+
+# - Save the character vector
+sms_freq_words <- findFreqTerms(sms_dtm_train, 5)
+
+# - Review the contents of the vector
+str(sms_freq_words)
+
+# - Now filter our DTM to include only terms appearing in frequent word vector.
+sms_dtm_freq_train <- sms_dtm_train[ , sms_freq_words]
+sms_dtm_freq_test <- sms_dtm_test[ , sms_freq_words]
+
+# - Naive Bayes classifier is usually trained on data with categorical features.
+# - Define a convert_counts function to convert counts to Yes or No
+convert_counts <- function(x) {
+  x <- ifelse(x > 0, "Yes", "No")
+}
+
+# - Use the apply() function (can be used on rows or columns), it uses MARGIN parameter to specify either rows (1) or columns (2).
+sms_train <- apply(sms_dtm_freq_train, MARGIN = 2, convert_counts)
+sms_test <- apply(sms_dtm_freq_test, MARGIN = 2, convert_counts)
 ```
 
-### Step 2 - exploring and preparing the data
+## Step 3 - training a model on the data
 
 ```{r}
-# - 
+# - Now that our data is properly formatted, train our model using the e1071 package
+#install.packages("e1071")
+library(e1071)
+
+# - Naive Bays learner occurs in stages:
+#   - Building the classifier:
+#     - m <- naiveBayes(train, class, laplace = 0)
+#       - train is the data frame or matrix containing training data
+#       - class is a factor vector with the class for each row in the training data
+#       - laplace is a number to control the Laplace estimator (by default 0)
+#   - Making predictions:
+#     - p <- predict(m, test, type = "class)
+#       - m is the model trained
+#       - test is a data frame or matrix containing test data with the same features an the training data used to build the classifier
+#       - type is either "class" or "raw" and specifies whether the predictions should be the most likely class value or the raw predicted probabilities
+# - The function will return a vector of predicted class values or raw predicted probabilities depending upon the value of the type parameter.
+sms_classifier <- naiveBayes(sms_train, sms_train_labels)
 ```
 
-### Step 2 - exploring and preparing the data
+## Step 4 - evaluating model performance
 
 ```{r}
-# - 
+# - To evaluate our class fier, we need to test it's predictions on unseen messages in the test data.
+sms_test_pred <- predict(sms_classifier, sms_test)
+
+# - Use the CrossTable() function to compare the predictions
+library(gmodels)
+CrossTable(sms_test_pred, sms_test_labels, 
+           prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+           dnn = c('predicted', 'actual')
+           )
 ```
 
-### Step 2 - exploring and preparing the data
+## Step 5 - improving model performance
 
 ```{r}
-# - 
-```
+# - To improve our model, try running again but this time with laplace = 1
+sms_classifier2 <- naiveBayes(sms_train, sms_train_labels, laplace = 1)
+sms_test_pred2 <- predict(sms_classifier2, sms_test)
 
-### Step 2 - exploring and preparing the data
-
-```{r}
-# - 
+CrossTable(sms_test_pred2, sms_test_labels, 
+           prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+           dnn = c('predicted', 'actual')
+           )
 ```
