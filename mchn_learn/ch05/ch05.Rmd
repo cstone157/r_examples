@@ -185,21 +185,104 @@ CrossTable(credit_test$default, credit_boost_pred10,
 ### Making some mistakes cost more than others
 
 ```{r}
-# - 
+# - The C5.0 algorithm allows us to assign a penalty to different types of errors in order to discourage a tree from making more costly mistakes.
+# - The penalties are designated a cost matrix
+matrix_dimensions <- list(c("no", "yes"), c("no", "yes"))
+names(matrix_dimensions) <- c("predicted", "actual")
+
+# - Examining the new object to make sure our dimensions have been set up correctly:
+matrix_dimensions
+
+# - Next assign penalties for the various types of errors by supplying for values to fill the matrix
+error_cost <- matrix(c(0, 1, 4, 0), nrow=2, 
+                     dimnames = matrix_dimensions)
+error_cost
+
+# - To see how this impacts classifications, let's apply it to our decision tree
+credit_cost <- C5.0(credit_train[-17], credit_train$default,
+                    costs = error_cost)
+credit_cost_pred <- predict(credit_cost, credit_test)
+CrossTable(credit_test$default, credit_cost_pred,
+           prop.chisq = FALSE, prop.c = FALSE, prop.r = FALSE,
+           dnn = c('actual default', 'predicted default'))
 ```
 
 ## Understanding classification rules
-  - 
+  - Classification rules represent knowledge in the form of logical if-else statements that assign a class to unlabeled examples.
+  - They are specified in terms of an <b>antecedent</b> and a <b>consequent</b>, which forms a statement that says "if this happens, then that happens"
+  - Rule learners are closely related sibling of decision tree learners and are oftern used for similar types of tasks. They are used for:
+    - identifying conditions that lead to hardware failures in mechanical devices.
+    - describing the key characteristics of groups of people for customer segmentation
+    - finding conditions that precede large drops or increases in the prices of shares of the stock market
 
 ### Separate and conquer
-  - 
+  - Classification rule learning algorithms utilize a heuristic known as <b>seperate and conquer</b>.
+  - As rules seem to cover portions of the data, separate and conquer algorithms are also known as <b>covering algorithms</b>, and the resulting rules are called covering rules.
 
 ## The 1R algorithm
-  - 
+  - <b>ZeroR</b> : simplest classifier which is a rule learner that considers no features and literally learns no rules.  For every unlabeled example, regardless of the values of its features it predicts the most common class.
+  - <b>1R algorithm (One Rule or OneR)</b>, improves over ZeroR by selecting a single rule.
+    - Strengths
+      - Generates a single, easy-to-understand human-readable rule
+      - Often performs surprising well
+      - Can serve as benchmark for more complex algorithms
+    - Weaknesses
+      - Uses only a single feature
+      - probably overly simplistic
 
 ## The RIPPER algorithm
-  - 
+  - <b>Incremental reduced error pruning (IREP) algorith</b> : uses a combination of pre-pruning and post-pruning methods that grow very comples rules and prune them before separating the instances from the full dataset.
+  - <b>Repeated incremental pruning to produce error reduction (RIPPER) algorithm</b> : improved upon IREP to generate rules that match or exceed the performance of decision trees.
+    - Strengths
+      - Generates easy-to-understand, human-readable rules
+      - Efficent on large and noisy datasets
+      - Generally, produces a simpler model than a comparable decision tree
+    - Weaknesses
+      - May result in rules that seem to defy common sense or expert knowledge
+      - Not ideal for working with numeric data
+      Might not perform as well as more complex models
+  - Has a three step process : grow, prune, optimize
+    - Grow : usesw seperate and conquer technique to greedily add conditions to a rule until it perfectly classifies
+    - When increasing a rule's specificity no longer reduces entropy, the rule is immediately pruned
+    - Grow and Prune are repeatedly performed until reaching a stopping criterion, at which point the entire set of rules is optimized.
 
 ### Rules from decision trees
-  - 
+  - Classification rules can also be obtained from a decision tree.
 
+### What makes trees and rules greedy?
+  - Decision trees and rule learners are known as <b>greedy learners</b> because they use data on a first-come, first-served basis.
+  - Both attempt to make partitions one at a time, finding the most homogeneous partion first.
+
+## Example - identifying poisonous mushrooms with rule learners
+### Step 1 - collection the data
+  - To identify rules for distinguishing poisonous mushrooms, we will utilize mushrooms data set.  Http://archive.ics.uci.edu/ml
+  - Download from https://github.com/PacktPublishing/Machine-Learning-with-R-Fourth-Edition/blob/main/Chapter%2005/mushrooms.csv
+
+### Step 2 - exploring and preparing the data
+```{r}
+# - Read in our dataset
+mushrooms <- read.csv("mushrooms.csv", stringsAsFactors = TRUE)
+str(mushrooms)
+
+# - Since the veil_type doesn't vary, go ahead and drop
+mushrooms$veil_type <- NULL
+
+# - Look at the distribution of the mushroom type
+table(mushrooms$type)
+
+```
+
+### Step 3 - training a model on data
+```{r}
+# - 
+```
+
+### Step 4 - evaluating model performance
+```{r}
+# - 
+```
+
+### Step 5 - improving model and performance
+```{r}
+# - 
+```
