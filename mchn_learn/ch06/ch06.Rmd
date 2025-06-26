@@ -1,0 +1,42 @@
+---
+Machine Learning with R
+Chapter 05 - Divide and Conquer - Classification Using Decision Trees and Rules
+---
+
+## Forecasting Numeric data - regression Methods
+- Basic statistical principles used in regression, a technique that models the size and strength of numeric relationships
+- How to prepare data regression analysis, and estimate and interpret a regression model
+- A pair of hybrid techniques known as regression trees and model trees, which adapt decision tree classifiers for numeric prediction tasks
+
+### Understanding regression
+  - 
+  
+
+### 
+  - 
+  
+
+### 
+  - 
+  
+
+### 
+  - 
+  
+
+### 
+  - 
+  
+### 
+
+```{r}
+```
+
+### 
+  - 
+  
+### 
+
+```{r}
+```
+

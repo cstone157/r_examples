@@ -274,15 +274,59 @@ table(mushrooms$type)
 
 ### Step 3 - training a model on data
 ```{r}
-# - 
+# - Since simpl;e rules can still be useful, let's see how a very simple rule learner performs on the mushroom data.
+# - 1R implementation found in the OneR backage.
+#install.packages("OneR")
+library(OneR)
+
+# - 1R classification rule syntax
+#   - Building the classifier:
+#     - m <- OneR(class ~ predictors, data = mydata)
+#     - class is the column in the mydata data frame to be predicted
+#     - predictors is an R formula specifying the features in mydata data frame
+#     - data is the data frame in which class and predictors can be found
+#   - Making predictions
+#     - p <- predict(m, test)
+#     - m is a model trained by the OneR() function
+#     - test is a data frame containing test data with the same features as the training data used to build the classifier
+
+# - OneR() function uses the R formula syntax to specify the model to be trained.  
+#   - The formula syntax uses the ~ operator to express the relationship between a target variable and its predictors.
+#   - The class variable to be learned goes to the left of the tild
+#   - The predictor features are written on the right, seperated by + operators
+#   - If you would like to model the relationship between the class y and the predictors x1 and x2, the formula would be y ~ x1 + x2.
+#   - The '.' allows our rule learner to consider all posible features
+mushroom_1R <- OneR(type ~ ., data = mushrooms)
+mushroom_1R
 ```
 
 ### Step 4 - evaluating model performance
 ```{r}
-# - 
+# - Examine the confusion matrix of the predicted versus actual values.
+mushroom_1R_pred <- predict(mushroom_1R, mushrooms)
+table(actual = mushrooms$type, predicted = mushroom_1R_pred)
 ```
 
 ### Step 5 - improving model and performance
 ```{r}
-# - 
+# - We will use the JRip(), a java based implementation of the RIPPER algorithm.
+#install.packages("RWeka")
+library(RWeka)
+
+# - RIPPER classification rule syntax
+#   - Building the classifier
+#     - m <- JRip(class ~ predictors, data = mydata)
+#     - class is the column in the mydata data frame to be predicted
+#     - predictors is an R formula specifying the features in mydata data frame to use predicton
+#     - data is the data frame in which class and predictors can be found
+#   - Making predictions
+#     - p <- predict(m, test)
+#     - m is a model trained by JRip() function
+#     - test is a data frame containing tesst data with the same features as the training data used to build the classifier
+
+mushroom_JRip <- JRip(type ~ ., data = mushrooms)
+mushroom_JRip
+
+mushroom_JRip_pred <- predict(mushroom_JRip, mushrooms)
+table(actual = mushrooms$type, predicted = mushroom_JRip_pred)
 ```
