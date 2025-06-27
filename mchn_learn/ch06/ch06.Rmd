@@ -9,27 +9,109 @@ Chapter 05 - Divide and Conquer - Classification Using Decision Trees and Rules
 - A pair of hybrid techniques known as regression trees and model trees, which adapt decision tree classifiers for numeric prediction tasks
 
 ### Understanding regression
-  - 
-  
+  - <b>Dependent variable</b> - The value to be predicted, is dependent upon the independent variables
+  - <b>Independent variable</b> - the predictors
+  - <b>Slope-intercept form</b> - "y = a + b*x"  The letter y indicates the dependent variable and x indicates the independent variable.  The <b>slope</b> term b specifies how much the line rises for each increase in x.  "a" is also know as the <b>intercept</b>.
+  - Use cases
+    - Examining how populations and individuals vary by their measured characteristics
+    - Quantifying the casual relationship between an event and its response
+    - Identifying patters that can be used to forecast future behavior
+  - Regression methods are also used for <b>statistical hypothesis testing</b>,
+  - <b>Simple linear regression</b> - there is only a single independent variable.
+  - <b>Multiple linear regression</b> - case of two or more independent variables
+  - <b>Logistic regression</b> - model binary categorical outcome.
+  - <b>Poisson regression</b> models integer count data
+  - <b>Multinomial logistic regression</b> models a categorical outcome and can therefore be used for classification
 
-### 
-  - 
-  
+### Simple linear regression
+  - Alpha (intercept), Beta(slope).
 
-### 
-  - 
-  
-
-### 
-  - 
-  
-
-### 
-  - 
-  
-### 
-
+### Ordinary least squares estimation
+  - In order to determine the optimal estimates of a and b, you can use <b>ordinary least squares (OLS)</b>
+    - In OLS, the slope and intercept are cosen such that they minimize the <b>sum of the squared errors (SSE)</b>.
+    - The errors, also know as <b>residuals</b>, are the vertical distance between the predicted y value and the actual y value.
+    - Solve using a = mean(y) - b*mean(x)
 ```{r}
+launch <- read.csv("challenger.csv")
+
+# - If the shuttle launch data is stored in a data frame, the independent variable x named "temperature", and the dependent variable y is named "distress_ct"
+b <- cov(launch$temperature, launch$distress_ct) / var(launch$temperature)
+b
+
+#- We can estimate "a" using the computed "b" value and apply the mean() function
+a <- mean(launch$distress_ct) - b * mean(launch$temperature)
+a
+```
+
+### Correlations
+  - A <b>correlation</b> between two variables is a number that indicates how closely their relationship follows a straight line.
+  - Without additional qualification, correlation typically refers to the <b>Pearson correlation coefficient</b>, a correlation rnages between -1 and +1.
+    - p(x, y) = Corr(x, y) = Cov(x,y) / (stddev(x)*stddev(y))
+```{r}
+# - Using the formula, we can calculate the correlation between the launch temperature and the number of O-ring distress
+r <- cov(launch$temperature, launch$distress_ct) / (sd(launch$temperature) * sd(launch$distress_ct))
+r
+
+# - Alternatively, we can obtain the same result with cor() correlation function:
+cor(launch$temperature, launch$distress_ct)
+
+# - The various rules of thumb used to interpret correlation strength.  
+#   - One method assigns a status of "weak" to values between 0.1 and 0.3; 
+#   - "moderate" to the range of 0.3 and 0.5, 
+#   - and "strong" to values above 0.5
+```
+
+### Multiple linear regression
+  - Strengths
+    - The most common approach for modeling numeric data
+    - Can be adapted to model almost any modeling task
+    - provides estimates of both the size and strength of the relationships among features and outcome
+  - Weaknesses
+    - Makes strong assumptions about the data
+    - The model's form must be specified by the user in advance
+    - Does not handle missing data
+    - Only works with numeric features, so categorical data requires additional preparation
+    - Requires some knowledge of statistics to understand the model
+  - y = a + b[1]*x[1] + b[2]*x[2] + ... + b[i]*x[i] + error
+  - The many rows and columns of data can be described in a condensed fomulations using <b>matrix notation</b>.
+  - The solution uses a pair of matrix operations: the T indicates the transpose of matrix X, while the negative exponent indicates the matrix inverse
+```{r}
+# - Using the following code, we can create a basic regression function named reg(), which takes a parameter y and a parameter x
+reg <- function(y, x) {
+  x <- as.matrix(x)
+  x <- cbind(Intercept = 1, x)
+  b <- solve(t(x) %*% x) %*% t(x) %*% y
+  colnames(b) <- "estimate"
+  print(b)
+}
+
+# - The as.matrix() function converts the data frame into matrix form
+# - cbind() function binds an additional column onto the x matrix; the command Intercept = 1 instructs R to name the new column Intercept and to fill the column with repeating 1 values.
+# - solve() takes the inverse of a matrix
+# - t() is used to transpose a matrix
+# - %*% multiplies two matrices
+
+str(launch)
+
+# - we can confir that our function is working correctly by comparing its result for the simple linear regression model of O-ring
+reg(y = launch$distress_ct, x = launch[2])
+
+reg(y = launch$distress_ct, x = launch[2:4])
+
+```
+
+## Example - predicting medical expenses using linear regression
+### Step 1 - collecting data
+  - The data is created using book of demographic statistics from the US Census Bureau
+
+### Step 2 - exploring and preparing the data
+```{r}
+# - Read the insurance file in
+insurance <- read.csv("insurance.csv", stringsAsFactors = TRUE)
+str(insurance)
+
+# - Our models dependent variable is expenses
+summary(insurances$expenses)
 ```
 
 ### 
