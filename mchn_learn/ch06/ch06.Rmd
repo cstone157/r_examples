@@ -111,14 +111,70 @@ insurance <- read.csv("insurance.csv", stringsAsFactors = TRUE)
 str(insurance)
 
 # - Our models dependent variable is expenses
-summary(insurances$expenses)
+summary(insurance$expenses)
+
+# - Although linear regression does not strictly require a normally distributed dependent variable, the model often fits better when this is true.
+summary(insurance$expenses)
+hist(insurance$expenses)
+
+# - Regression require that every feature is numeric.  Look at our three factor-type features.
+table(insurance$region)
+```
+
+### Exploring relationships among features - the correlation matrix
+```{r}
+# - A correlation matrix provides a quick overview of the relationship between dependent and independent variables.
+cor(insurance[c("age", "bmi", "children", "expenses")])
+```
+
+### Visualizing relationships among features - the scatterplot matrix
+```{r}
+# - Instead of creating a scatterplot for each possible relationship, we can create a scatterplot matrix
+pairs(insurance[c("age", "bmi", "children", "expenses")])
+
+# - An enchanced scatterplot matrix can be created with pairs.panels()
+#install.packages("psych")
+library(psych)
+pairs.panels(insurance[c("age", "bmi", "children", "expenses")])
+
+# - The oval-shaped object in each scatterplot is a correlation ellipse.  It provides a visualization of correlation strength.
+# - The curve drawn on the scatterplot is called a loess curve.  it indicates the general relationship between the x axis and y axis variables.
+```
+
+### Step 3 - training a model on the data
+```{r}
+# - Multiple regression modeling syntax
+#   - Building the model:
+#     - m <- lm(dv ~ iv, data = mydata)
+#     - dv is the dependent variable in the mydata data frame to be modeled
+#     - iv is an R formula specifying the independent variable in the mydata data frame to use in the model
+#     - mydata specifies the data frame in which the dv and iv variables can be found
+#   - Making predictions:
+#     - p <- predict(m, test)
+#     - m is a model trained by the lm() function
+#     - test is a data frame containing test data with the same features as the training data used to build the model.
+
+# - fits a linear regression model that relates the six independent variables to the total medical expenses.
+ins_model <- lm(expenses ~ age + children + bmi + sex + smoker + region,
+                data = insurance)
+
+# - because the period(.) character can be used to specify all features, an equivalent to the prior command is:
+ins_model <- lm(expenses ~ ., data = insurance)
+ins_model
+```
+
+### 
+```{r}
+```
+
+### 
+```{r}
 ```
 
 ### 
   - 
   
 ### 
-
 ```{r}
 ```
 
