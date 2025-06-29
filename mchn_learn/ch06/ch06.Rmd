@@ -163,12 +163,75 @@ ins_model <- lm(expenses ~ ., data = insurance)
 ins_model
 ```
 
-### 
+### Step 4 - evaluating model performance
 ```{r}
+summary(ins_model)
+
+# - Summary results
+#   - Residuals : section provides summary statics for the errors in our predictions
+#     - A residual is equal to the true value minus the predicted value, the maximum error.
+#   - P-value (denoted Pr(>|t|)) provides an estimate of the probability that the true coefficient is zeor different value of the estimate.
+#     - Small p-values suggest that true coefficient is very unlikely to be zero
+#     - P-vlues that have stars (***), will correspond to the footnotes that specify the significance level met by estimate.
+#       - This level is a threshold, chosed prior to building, which will be used to indicate "real" finding, as opposed to those due to change alone; p-values less than the significance level are considered statistically significant.
+#   - Multiple R-squared values (coefficient of determination) provides a measure of how well our model as a whole explains the values of the dependent variable.
+#     - Similar to correlation coefficient, the closer the value is to 1.0, the better.
+#     - Adjusted R-squared value corrects R-squared by penalizing the models with a large number of independent variables.
 ```
 
-### 
+## Step 5 - improving model performance
+### Model specification - adding nonlinear relationships
 ```{r}
+# - Typical regression equations :
+#   - y = a + b*x
+# - To account for nonlinear relationship, we add higher order term :
+#   - y = a + b1*x + b2*x^2
+
+# - To add the nonlinear age to the model, we add new variable
+insurance$age2 <- insurance$age^2
+```
+
+### Transormation - converting a numberic variable to a binary indicator
+```{r}
+# - Suppose we have a hunch that the effect of a feature is not cumulative, but rather that it has an effect only after specific threshold has been reached.  For instance, BMI may have zero impoct on medical expenditures for individuals in the normal weight range, but it may be strongly related to higher costs for the obese.
+# - We can model this relatioship by creating a binary obesity indicator variable that is 1 if the BMI is at least 30 and 0 if it less than 30.
+# - To create the feature, we can use the ifelse() function that, for each element in a vector
+insurance$bmi30 <- ifelse(insurance$bmi >= 30, 1, 0)
+```
+
+### Model specification - adding interaction effects
+ - When two features have a combined effect, this is known as interation.
+   - If we suspect two variables interact, we can test this hypothesis by adding their interaction to the model.
+   - The "*" operator is shorthand that instructs R to model "expenses ~ bmi30 + smokeryes + bmi:smokeryes".
+
+### Putting it all together - an improved regression model
+```{r}
+# - The improvements we will be be making:
+#   - Added a nonliner term for age
+#   - Created an indicator for obesity
+#   - Specified an interaction between obesity and smoking
+ins_model2 <- lm(expenses ~ age + age2 + children + bmi + 
+                   sex + bmi30*smoker + region, data = insurance)
+
+summary(ins_model2)
+```
+
+### Making predictions with a regression model
+```{r}
+# - Apply the model to the original training data using the predict function:
+insurance$pred <- predict(ins_model2, insurance)
+
+# - compute the correlation between the predicated and actual actual values
+cor(insurance$pred, insurance$expenses)
+
+# - Examine the finding as a scatterplot.
+plot(insurance$pred, insurance$expenses)
+abline(a = 0, b = 1, col = "red", lwd = 3, lyt =2)
+
+# - To estimate the insurance expenses for a 30 year old, overweight, male non-smoker with two children in the Northeast type:
+predict(ins_model2, data.frame(age = 30, age2 = 30^2, children = 2,
+                         bmi = 30, sex = "male", bmi30 = 1,
+                         smoker = "no", region = "northeast"))
 ```
 
 ### 
