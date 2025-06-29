@@ -232,11 +232,126 @@ abline(a = 0, b = 1, col = "red", lwd = 3, lyt =2)
 predict(ins_model2, data.frame(age = 30, age2 = 30^2, children = 2,
                          bmi = 30, sex = "male", bmi30 = 1,
                          smoker = "no", region = "northeast"))
+
+# - For a female
+predict(ins_model2, data.frame(age = 30, age2 = 30^2, children = 2,
+                         bmi = 30, sex = "female", bmi30 = 1,
+                         smoker = "no", region = "northeast"))
+
+```
+
+## Understanding regression trees and model trees
+  - Trees for numeric prediction fall into 2 categories.
+    - <b>regression trees</b> were introducted in 1980s as part of the seminal <b>classification and regression tree (CART)</b> algorithm.
+      - Regression trees do not use linear regression methods, they make predictions based on the average value of examples that reach a leaf.
+    - <b>model trees</b> - grown in the same as regression tress, but each leaf, a multiple linear regression model is built from examples reaching that node.
+  
+### Adding regression to trees
+  - Strengths
+    - Combines the strengths of decision trees with ability to model numeric data
+    - does not require the user to specify the model in advance
+    - uses automatic feature selection which allows the approach to be used with very large number of features
+    - May fit some types of data much better than linear regression
+    - Does not require knowledge of statistics to interpret the model
+  - Strengths
+    - Not as well-known as linear regression
+    - Requires a large amount of training data
+    - Difficult to determine the overall net effect of individual features on the outcome
+    - Large trees can become more difficult to interpret than a regression model
+  - Data is partitioned using a divide and conquer strategy according to the feature that will result in the greatest increase in homogeneity (homogeneity is entropy in classification trees)
+  - For numeric decision trees, homogeneity is measured by statics like variance, standard deviation, or absolute deviation from mean.
+  - One common splitting criterion is called <b>standard deviation reduction (SDR)</b>.
+    - SDR = stddev(T) - sum(abs(Ti)/abs(len(T)*stddev(Ti))
+```{r}
+# - Compute SDR for A and B as follows
+tee <- c(1, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7, 7, 7, 7)
+at1 <- c(1, 1, 1, 2, 2, 3, 4, 5, 5)
+at2 <- c(6, 6, 7, 7, 7, 7)
+bt1 <- c(1, 1, 1, 2, 2, 3, 4)
+bt2 <- c(5, 5, 6, 6, 7, 7, 7, 7)
+sdr_a <- sd(tee) - (length(at1) / length(tee) * sd(at1) + 
+                      length(at2) / length(tee) * sd(at2))
+sdr_b <- sd(tee) - (length(bt1) / length(tee) * sd(bt1) + 
+                      length(bt2) / length(tee) * sd(bt2))
+
+sdr_a
+sdr_b
+
+# - Since SDR was reduced more for split on B, the decision would use B first
+```
+
+
+## Example - estimating the quality of wines with regression trees and model trees
+### Step 1 - collection data
+  - We will use data from UCI Machine Learning Repository (http://archive.ics.uci.edu/ml)
+  
+### Step 2 - exploring and preparing the data
+```{r}
+wine <- read.csv("whitewines.csv")
+
+# - wine data includes 11 features
+str(wine)
+
+# Check the distribution of our data
+hist(wine$quality)
+
+# - Divide the dataset into training and testing sets
+wine_train <- wine[1:3750, ]
+wine_test <- wine[3751:4898, ]
+```
+
+### Step 3 - training a model on the data
+```{r}
+# - Install the rpart package
+#install.packages("rpart")
+library(rpart)
+
+# - Regression trees syntax
+#   - Building the model :
+#     - m <- rpart(dv ~ iv, data = mydata)
+#     - dv is the dependent variable in the mydata data frame to be modeled
+#     - iv is an R formula specifying the independent variables in the mydata data frame to use in the model
+#     - data specifies the data frame in which the dv and iv variables can be found
+#   - Making predictions :
+#     - p <- predict(m, test, type = "vector")
+#     - m is a model trained by the rpart() function
+#     - test is a data frame containing test data with the same features as the training data used to build the model
+#     - type specifies the type of prediction to return, either "vector" (for predicted numeric values), "class" for predicted classes, or "prob" (for predicted class probabilities)
+
+m.rpart <- rpart(quality ~ ., data = wine_train)
+m.rpart
+```
+
+### Visualizing decision trees
+```{r}
+#install.packages("rpart.plot")
+
+# - Use the rpart.plot() function to produce a tree diagram
+library(rpart.plot)
+rpart.plot(m.rpart, digits = 3)
+
+# - Some useful options
+#   - fallen.leaves parameter forces the leaf nodes to be aligned at bottom of plot
+#   - type and extra affects the way the decisions and nodes are labeled
+rpart.plot(m.rpart, digits = 4, fallen.leaves = TRUE,
+           type = 3, extra = 101)
+```
+
+### Step 4 - evaluating model performance
+```{r}
+p.rpart <- predict(m.rpart, wine_test)
+
+summary(p.rpart)
+summary(wine_test$quality)
+
+# - Correlation between the predicted and actual quality values
+cor(p.rpart, wine_test$quality)
 ```
 
 ### 
-  - 
-  
+```{r}
+```
+
 ### 
 ```{r}
 ```
