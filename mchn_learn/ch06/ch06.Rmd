@@ -348,11 +348,51 @@ summary(wine_test$quality)
 cor(p.rpart, wine_test$quality)
 ```
 
-### 
+### Measuring performance with the mean absolute error
 ```{r}
+# - The measurement is called the mean absolute error(MAE).
+#   - MAE = 1/n*sum(e)
+MAE <- function(actual, predicted) {
+  mean(abs(actual - predicted))
+}
+
+# - The MAE for our predictions is then :
+MAE(p.rpart, wine_test$quality)
+
+# - The mean quality rating in the training data is as follows :
+mean(wine_train$quality)
+
+MAE(5.87, wine_test$quality)
 ```
 
-### 
+### Step 5 - improving model performance
 ```{r}
+# - Model tree is the Cubist algorithm, an enhancement of the M5 tree algorithm
+# - The Cubist algorithm is available in R via the Cubist package
+#install.packages("Cubist")
+
+# - Model trees syntax
+#   - Building the model
+#     - m <- cubist(train, class)
+#     - train is a data frame or matrix containing training data
+#     - class is a factor vector with class for each row in training data
+#   - Making predictions
+#     - p <- predict(m, test)
+#     - m is a model trained by the cubist() function
+#     - test is a data frame containing test data with the same features as the training data used to build the model
+
+library(Cubist)
+m.cubist <- cubist(x = wine_train[-12], y = wine_train$quality)
+m.cubist
+
+# - Examine the model to see the rules
+summary(m.cubist)
+
+# - Examine the performance
+p.cubist <- predict(m.cubist, wine_test)
+summary(p.cubist)
+
+# - The model slightly reduced the mean absolute error :
+MAE(wine_test$quality, p.cubist)
 ```
 

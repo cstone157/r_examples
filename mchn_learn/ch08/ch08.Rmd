@@ -1,0 +1,4 @@
+---
+Machine Learning with R
+Chapter 08 - Finding Patterns - Market Basket Analysis Using Association Rules
+---
