@@ -2,3 +2,50 @@
 Machine Learning with R
 Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
 ---
+  - <b>black box</b> - a process that transorms the input into the output is obfuscated by an imaginary box.
+
+## Understanding neural networks
+  - <b>artificial neural network (ANN)</b> : models the relationship between a set of input signals and an output signal using a model derived from how a biological brain works.
+  - <b>neurons</b> : interconnected class that form a network, to make a brain.
+  - <b>nodes</b> : artificial neurons, that forms a ANN.
+  - <b>Turing test</b> : controversial question, proposed in 1950 by Alan Turing, which grades a machines intelligence, based on if a human can distinguish it's behavior from a living creature's.
+  - Use cases
+    - Speech, handwriting, and image recognition
+    - Automation of smart devices
+    - Sophisticated models of weather and climate patterns, tensile strength, fluid dynamics, ecetera.
+
+### From biological to artificial neurons
+  - Biological system to be modeled
+    - <b>Dendrites</b> : part of the cell that receiving incoming signals
+    - <b>Cell body</b> : accumulates the incoming signals, a threshold is readed at which point the cell fires
+    - <b>Axon</b> : transmit the electrochemical output signal
+    - <b>Synapse</b> : the chemical signal passed to neighboring neurons across a tiny gap after the electric signal is processed
+  - Single artificial neuron
+    - <b>Activation function</b> : transforms a neuron's net input signal into a single output signal to be broadcasted further in the network
+    - <b>Network topology</b> : describes the number of neurons in the model as well as the number of layers and manner in which they are connected.
+    - <b>Training algorithm</b> : specifies how connection weights are set in order to inhibit to excite neurons in proportion to the input signal.
+
+###
+  - 
+
+###
+  - 
+
+###
+  - 
+
+###
+  - 
+
+###
+  - 
+
+###
+  - 
+
+###
+  - 
+
+###
+  - 
+
