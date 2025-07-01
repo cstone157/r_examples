@@ -25,19 +25,40 @@ Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
     - <b>Network topology</b> : describes the number of neurons in the model as well as the number of layers and manner in which they are connected.
     - <b>Training algorithm</b> : specifies how connection weights are set in order to inhibit to excite neurons in proportion to the input signal.
 
-###
-  - 
+### Activation functions
+  - The activation function is the mechanism by which the artificial neuron processes incoming information and passes it throughout the network.
+  - <b>Threshold activation function</b> : summing the total input signal and determining whether it meets the firing threshold.
+    - Threshold activation function is also sometimes known as <b>unit step activation function</b>
+  - <b>Sigmoid activation function</b> : most commonly used activation function.
+    - f(x) = 1 / (1 + e^(-x))
+    - The sigmoid is differential: meaning it is possible to calculate the derivative across entire range of inputs.
+  - Gaussian activation function is the basis of a <b>radial basis function (RBF) network</b>.
+  - Because activation functions have a small range of outputs, activation function like sigmoid are sometimes called <b>squashing functions</b>.
 
-###
-  - 
+### Network topology
+  - <b>Topology</b> : pattern and structures of interconnected neurons.
+    - Number of layers
+    - information in the network is allowed to travel backward
+    - number of nodes within each layer
 
-###
-  - 
+### The number of layers
+  - A set of neurons called <b>input nodes</b> receives unprocessed signals directly from the input data.
+  - The signals sent by input nodes are received by the <b>output node</b> which uses its own activation function to generate a final predictions
+  - The input and output nodes are arranged in groups known as <b>layers</b>.
+  - <b>Single-layer network</b> : one set of connection weights.  Used for basic pattern classification, particularly for patterns that are linearly separable
+  - <b>multi-layer network</b> : network with more than one layer.
+  - <b>hidden layers</b> : layers in the middle of the network.
+  - <b>fully connected</b> every node in one layer is connected to every node in the next layer.
 
-###
-  - 
+### The direction of information travel
+  - <b>Feed-forward network</b> : the input signal is fed continuously in one direction from the input layer to the output layer
+  - <b>Deep neural network (DNN)</b> : neural network with multiple hidden layers
+  - <b>Deep learning</b> : the practice of training deep neural networks.
+  - <b>Recurrent network or feedback network</b> : allows signals to travel backwards using loops.
+  - <b>Delay</b> : short-term memory
+  - <b>Multi-layer perceptron (MLP)</b> : multi-layer feed-forward network
 
-###
+### The number of nodes in each layer
   - 
 
 ###
