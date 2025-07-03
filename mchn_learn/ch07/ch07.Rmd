@@ -2,9 +2,11 @@
 Machine Learning with R
 Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
 ---
+
   - <b>black box</b> - a process that transorms the input into the output is obfuscated by an imaginary box.
 
 ## Understanding neural networks
+
   - <b>artificial neural network (ANN)</b> : models the relationship between a set of input signals and an output signal using a model derived from how a biological brain works.
   - <b>neurons</b> : interconnected class that form a network, to make a brain.
   - <b>nodes</b> : artificial neurons, that forms a ANN.
@@ -15,6 +17,7 @@ Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
     - Sophisticated models of weather and climate patterns, tensile strength, fluid dynamics, ecetera.
 
 ### From biological to artificial neurons
+
   - Biological system to be modeled
     - <b>Dendrites</b> : part of the cell that receiving incoming signals
     - <b>Cell body</b> : accumulates the incoming signals, a threshold is readed at which point the cell fires
@@ -26,6 +29,7 @@ Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
     - <b>Training algorithm</b> : specifies how connection weights are set in order to inhibit to excite neurons in proportion to the input signal.
 
 ### Activation functions
+
   - The activation function is the mechanism by which the artificial neuron processes incoming information and passes it throughout the network.
   - <b>Threshold activation function</b> : summing the total input signal and determining whether it meets the firing threshold.
     - Threshold activation function is also sometimes known as <b>unit step activation function</b>
@@ -42,6 +46,7 @@ Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
     - number of nodes within each layer
 
 ### The number of layers
+
   - A set of neurons called <b>input nodes</b> receives unprocessed signals directly from the input data.
   - The signals sent by input nodes are received by the <b>output node</b> which uses its own activation function to generate a final predictions
   - The input and output nodes are arranged in groups known as <b>layers</b>.
@@ -51,6 +56,7 @@ Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
   - <b>fully connected</b> every node in one layer is connected to every node in the next layer.
 
 ### The direction of information travel
+
   - <b>Feed-forward network</b> : the input signal is fed continuously in one direction from the input layer to the output layer
   - <b>Deep neural network (DNN)</b> : neural network with multiple hidden layers
   - <b>Deep learning</b> : the practice of training deep neural networks.
@@ -59,14 +65,71 @@ Chapter 07 - Black Box Methods - Neural Networks and Support Vector Machines
   - <b>Multi-layer perceptron (MLP)</b> : multi-layer feed-forward network
 
 ### The number of nodes in each layer
+
+  - There is no reliable rule to determine the number of neurons in hidden layer.
+
+### Training neural networks with back-propagation
+
+  - <b>back-propagation</b> : strategy of back-propagating errors
+  - ANN strengths and weaknesses
+    - Strengths
+      - Can be adapted to classification or numeric prediction problems
+      - Capable of modeling more complex patterns than nearly any other algorithm
+      - Makes few assumptions about the data's underlying relationships
+    - Weaknesses
+      - Extremely computationally intensive and slow to train
+      - Very prone to overfitting training data
+      - Results in a complex black box model that is dificult, if not impossible to interpret
+      
+
+## Example - modeling the strength of concrete with ANNs
+
+### Step 1 - collection data
+
+  - Using compressive strength of concrete data from UCI Machine Learning Repository (http://archive.ics.uci.edu/ml).
+
+### Step 2 - exploring and preparing the data
+```{r}
+# - Read the csv
+concrete <- read.csv("concrete.csv")
+str(concrete)
+
+# - Define our own normalize function
+normalize <- function(x) {
+  return (x - min(x)) / (max(x) - min(x))
+}
+
+# - Apply our normalize function to ever column in the concrete data frame using lapply
+concrete_norm <- as.data.frame(lapply(concrete, normalize))
+
+# - Confirm normalization worked
+summary(concrete_norm$strength)
+
+# - Compare to original
+summary(concrete$strength)
+
+# - Divide our data into training (75%) and testing sets (25%)
+concrete_train <- concrete_norm[1:773, ]
+concrete_test <- concrete_norm[774:1030, ]
+```
+
+### Step 3 - training a model on data
+```{r}
+```
+
+### 
+```{r}
+```
+
+### 
+```{r}
+```
+
+### 
   - 
 
-###
-  - 
 
-###
-  - 
-
-###
-  - 
+### 
+```{r}
+```
 
