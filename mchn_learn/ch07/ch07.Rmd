@@ -96,7 +96,7 @@ str(concrete)
 
 # - Define our own normalize function
 normalize <- function(x) {
-  return (x - min(x)) / (max(x) - min(x))
+  return ((x - min(x)) / (max(x) - min(x)))
 }
 
 # - Apply our normalize function to ever column in the concrete data frame using lapply
@@ -137,7 +137,8 @@ concrete_model <- neuralnet(strength ~ cement + slag + ash + water +
                             data = concrete_train)
 
 # - We can visualize the network topology using plot() function
-plot(concrete_model)
+#plot(concrete_model)
+plot(concrete_model, rep = "best")
 
 # - At the bottom of the figure, R reports the number of training steps and an error 
 #     measure called the sum of squared errors (SSE).  Is the sum of the squared 
@@ -156,10 +157,6 @@ predicted_strength <- model_results$net.result
 
 # - Measure the correlation between our predicted concrete strength and the true value.
 cor(predicted_strength, concrete_test$strength)
-
-## - TO-DO / ERROR
-## - Something is very wrong with this code.  Moving on and gonna try the next 
-##    one since this seems to be over-fitting
 ```
 
 ### Step 5 - improving model performance
@@ -167,15 +164,18 @@ cor(predicted_strength, concrete_test$strength)
 # - Increase the number of hidden layers to see if that helps
 concrete_model2 <- neuralnet(strength ~ cement + slag + ash + water + 
                             superplastic + coarseagg + fineagg + age, 
-                            hidden = 5,
+                            hidden = 1,
                             data = concrete_train)
 
 #plot(concrete_model2)
+plot(concrete_model2, rep = "best")
 
 # - Test the results
 model_results2 <- compute(concrete_model2, concrete_test[1:8])
 predicted_strength2 <- model_results2$net.result
 cor(predicted_strength2, concrete_test$strength)
+
+
 ```
 
 ### 
