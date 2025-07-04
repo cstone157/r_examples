@@ -115,14 +115,67 @@ concrete_test <- concrete_norm[774:1030, ]
 
 ### Step 3 - training a model on data
 ```{r}
+# - We're going to use the neuralnet package.
+#install.packages("neuralnet")
+library(neuralnet)
+
+# - Neural network syntax
+#   - Building the model:
+#     - m <- neuralnet(target ~ predictors, data = mydata, hidden = 1, act.fct = "logistic")
+#     - target is the outcome of the mydata data frame to be modeled
+#     - predictors is an R formula specifying the features in the mydata data frame to use for prediction
+#     - data specifies the data frame where the target and predictors are found
+#     - hidden specifies the number of neurons in the hidden layer (by default 1).  Note: use an integer vector to specify multiple hidden layers, for example c(2, 2)
+#     - act.fct specifies the activation function, either "logistic" or "tanh".  Note: a differentiable custom activation function can also be supplied.
+#   - Making predictions: 
+#     - p <- compute(m, test)
+#     - m is a model trained by the neuralnet() function
+#     - test is a data frame containing test data with the same features as the training data used to build the classifier
+
+concrete_model <- neuralnet(strength ~ cement + slag + ash + water + 
+                              superplastic + coarseagg + fineagg + age, 
+                            data = concrete_train)
+
+# - We can visualize the network topology using plot() function
+plot(concrete_model)
+
+# - At the bottom of the figure, R reports the number of training steps and an error 
+#     measure called the sum of squared errors (SSE).  Is the sum of the squared 
+#     differences between the predicted and actual values.
 ```
 
-### 
+### Step 4 - evaluating model performance
 ```{r}
+# - Generate predictions on the test data, we can use the compute() function as follows:
+model_results <- compute(concrete_model, concrete_test[1:8])
+
+# - Compute() works differently from predict() functions.  Return a list of two 
+#     components: $ neurons, which stores the neurons for each layer in the network,
+#     and $net.result, which stores the predicted values
+predicted_strength <- model_results$net.result
+
+# - Measure the correlation between our predicted concrete strength and the true value.
+cor(predicted_strength, concrete_test$strength)
+
+## - TO-DO / ERROR
+## - Something is very wrong with this code.  Moving on and gonna try the next 
+##    one since this seems to be over-fitting
 ```
 
-### 
+### Step 5 - improving model performance
 ```{r}
+# - Increase the number of hidden layers to see if that helps
+concrete_model2 <- neuralnet(strength ~ cement + slag + ash + water + 
+                            superplastic + coarseagg + fineagg + age, 
+                            hidden = 5,
+                            data = concrete_train)
+
+#plot(concrete_model2)
+
+# - Test the results
+model_results2 <- compute(concrete_model2, concrete_test[1:8])
+predicted_strength2 <- model_results2$net.result
+cor(predicted_strength2, concrete_test$strength)
 ```
 
 ### 
