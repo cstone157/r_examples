@@ -285,7 +285,9 @@ cor(strengths$pred_new, strengths$actual)
 
 ### Step 2 - exploring and preparing the data
 ```{r}
-letters <- read.csv("letterdata.csv")
+#letters <- read.csv("letterdata.csv")
+# Needed to convert the strings to categorical factors
+letters <- read.csv("letterdata.csv", stringsAsFactors = TRUE)
 str(letters)
 
 # Split our data
@@ -318,7 +320,7 @@ letters_test <- letters[16001:20000, ]
 #install.packages("kernlab")
 library(kernlab)
 letter_classifier <- ksvm(letter ~ ., data = letters_train,
-                          kernel = "vanilladog")
+                          kernel = "vanilladot")
 # See some basic information about our model
 letter_classifier
 ```
@@ -375,7 +377,7 @@ accuray_values <- sapply(cost_values, function(x) {
   pred <- predict(m, letters_test)
   agree <- ifelse(pred == letters_test$letter, 1, 0)
   accuracy <- sum(agree) / nrow(letters_test)
-  return accuracy
+  return (accuracy)
 })
 
 plot(cost_values, accuray_values, type="b")
