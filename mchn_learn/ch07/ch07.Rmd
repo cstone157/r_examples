@@ -208,13 +208,175 @@ head(strengths, n = 3)
 
 # Check the correclation between predicted and actual
 cor(strengths$pred, strengths$actual)
+
+# Unnormalize our data
+unnormalize <- function(x) {
+  return ((x * (max(concrete$strength)) - 
+             min(concrete$strength)) + min(concrete$strength))
+}
+
+strengths$pred_new <- unnormalize(strengths$pred)
+strengths$error <- strengths$pred_new - strengths$actual
+
+head(strengths, n = 3)
+
+cor(strengths$pred_new, strengths$actual)
+
+# Vanishing gradient problem and exploding gradient problem: where the backpropagation
+#   algorithm fails to find a useful solution due to an inability to converge in a reasonable time.
 ```
 
-### 
-  - 
+### Understanding support vector machines
 
+  - <b>support vector machine (SVM)</b> : imagined as a surface that creates a boundary between points of data plotted in a multidimensional space representing examples of their feature values.
+  - <b>hyperplane</b> : divides the space to create faily homogeneous partitions on either side.
+  - SVM learning combines aspects of both the instance-base nearest neighbor learning presented in CH03 and linear regression modeling in CH06.
+  - Use cases:
+    - Classification of microarray gene expression
+    - text categorization
+    - detection of rate yet important events
 
-### 
+### Classification with hyperplanes
+
+  - If a straight line or flat surface can separate classes, they are said to be <b>linearly separable</b>.
+  - <b>maximum margin hyperplane (MMH)</b> : creates the greatest separation between two classes.
+  - <b>support vectors</b> : are the points from each class that are the closet to the MMH.  Each class must have at least one support vector.
+
+### The case of linearly sparable data
+
+  - <b>convex hull</b> : the outer boundaries of a MMH
+  - <b>quadratic optimization</b> : algorithms  that use calculate a MMH is perpendicular bisector of the shortest line between two convex hulls.
+  - alternative approach involves a search through the space of every possible hyperplane in order to find a set of two parallel planes that divide the points into homogeneous groups yet themselves are as far apart as possible.
+  - <b>Euclidean norm</b> : (||w||) the distance from the origin to vector w.
+
+### The case of nonlinearly separable data
+
+  - <b>stack variable</b> : when data is not linearly separable, creates a soft margin that allows some points to fall on the incorrect side of the margin.
+
+### Using kernels for nonlinear spaces
+
+  - A key feature of SVMs is their ability to map the problem into a higher dimension space using a process known as <b>kernel trick</b>.
+    - With the additions of features, classes that weren't linearly separable, can be linearly separated.
+  - SVM with nonlinear kernels are extremely powerful classifiers:
+    - Strengths
+      - Can be used for classification or numeric predictions
+      - Not overly influenced by noisy data and not very prone to overfitting
+      - May be easier to use than neural networks
+      - Gain popularity due to their high accuracy and high-profile wines in data mining
+    - Weaknesses
+      - Finding the best model requires the test of various combinations of kernels and model parameters
+      - Can be slow to train
+      - Results in a complex black box model
+  - <b>dot product</b> takes two vectors and returns a single number
+  - <b>linear kernel</b> does not transform the data at all.
+  - <b>polynomial kernel</b> add a degree d to a simple nonlinear transformation of data
+  - <b>sigmoid kernel</b> add a sigmoid activation function
+  - <b>Gaussian RBF kernel</b> similar to an RBF neural network.
+
+### Example - performing OCR with SVMs
+
+  - Develop a model similar to those used at core of <b>optical character recognition (OCR)</b>
+
+### Step 1 - collection data
+
+  - <b>glyph</b> : term refers to a letter, symbol or number.
+  - First step of OCR processing document is to divide the paper into a matrix such that each cell in the grid contains a single glyph.
+  - Use a dataset donated to UCI Machine Learning Repository, containing 20000 examples of 26 English alphabet capital letters
+
+### Step 2 - exploring and preparing the data
 ```{r}
+letters <- read.csv("letterdata.csv")
+str(letters)
+
+# Split our data
+letters_train <- letters[1:16000, ]
+letters_test <- letters[16001:20000, ]
 ```
 
+### Step 3 - training a model on the data
+```{r}
+# - Support vector machine syntax
+#   - Building the model
+#     - m <- ksvm(target ~ predictors, data = mydata,
+#                 kernel = "rbfdot", c = 1)
+#     - target is the outcome in the mydata data frame to be modeled
+#     - predictors is an R formula specifying the features in the mydata data frame to use for prediction
+#     - data specifies the data frame in which the target and predictors variables can be found
+#     - kernel specifies a nonlinear mapping such as "rbfdot" (radial basis), 
+#       "polydot" (polynomial), "tanhdot" (hyperbolic tangent sigmoid), or
+#       "vanilladog" (linear)
+#     - c is a number that specifies the cost of violating the constraints, i.e. how big of a
+#       penalty there is for the "soft margin."  Larger values will result in narrower margins
+#   - Making predictions:
+#     - p <- predict(m, test, type = "response")
+#     - m is the model trained by the ksvm() function
+#     - test is a data frame containing test data with the same features as the training 
+#       data used to build the classifier
+#     - type specifies whether the predictions should be "response" (the 
+#       predicted class) or "probabilities" (the predicted probability, one 
+#       column per class level)
+#install.packages("kernlab")
+library(kernlab)
+letter_classifier <- ksvm(letter ~ ., data = letters_train,
+                          kernel = "vanilladog")
+# See some basic information about our model
+letter_classifier
+```
+
+### Step 4 - evaluating model performance
+```{r}
+# The default type is "response"
+letter_predictions <- predict(letter_classifier, letters_test)
+head(letter_predictions)
+
+# We'll use the table() function to evalue the predicted letter to the true letter
+table(letter_predictions, letters_test$letter)
+
+# create a vector containing TRUE OR FALSE values indicating whether the models predicted
+#   letter agrees
+agreement <- letter_predictions == letters_test$letter
+table(agreement)
+
+# In percentage terms
+prop.table(table(agreement))
+```
+
+## Step 5 - improving model performance
+
+### Changing the SVM kernel function
+```{r}
+# Train a RBF-based SVM
+letter_classifier_rbf <- ksvm(letter ~ ., data = letters_train,
+                              kernel = "rbfdot")
+
+# Make predictions
+letter_predictions_rbf <- predict(letter_classifier_rbf, letters_test)
+
+# Compare our accuracy
+agreement_rbf <- letter_predictions_rbf == letters_test$letter
+table(agreement_rbf)
+
+# In percentage terms
+prop.table(table(agreement))
+```
+
+### Identifying the best SVM cost parameter
+```{r}
+# Vary the cost parameter, which modifies the width of the SVM decision boundary.
+
+# There is no rule of thub to know the ideal value beforehand, use sapply() to
+#   apply a custom function to vector of potential cost estimates.
+cost_values <- c(1, seq(from = 5, to = 40, by = 5))
+
+accuray_values <- sapply(cost_values, function(x) {
+  set.seed(12345)
+  m <- ksvm(letter ~ ., data = letters_train,
+            kernel = "rbfdot", C = x)
+  pred <- predict(m, letters_test)
+  agree <- ifelse(pred == letters_test$letter, 1, 0)
+  accuracy <- sum(agree) / nrow(letters_test)
+  return accuracy
+})
+
+plot(cost_values, accuray_values, type="b")
+```
