@@ -2,3 +2,202 @@
 Machine Learning with R
 Chapter 08 - Finding Patterns - Market Basket Analysis Using Association Rules
 ---
+
+  - <b>market basket analysis</b> : transactional data, to determine trends.  Often applied to supermarket data, to identify impulse purchases.
+  - Uses for basket analysis
+    - Performance measures to find associates in large databases
+    - undertanding peculiarities of transactional data
+    - how to identify the useful and actionable patters
+
+### Understanding association rules
+
+  - Groups of one or more items are surrounded by brackets, to indicate that they form a set or an <b>itemset</b>. : 
+    - {bread, peanut butter, jelly}
+    - <b>association rules</b> : specify patterns found in relations ships.
+    - A rule identified from the preceding example transaction might be expressed in the for:
+      - {peanut butter, jelly} -> {bread}
+  - Association rule learners are unsupervised knowledge discovery in large databases.
+  - Potential applications
+    - Seearching for interesting and frequently occurring patterns of DNA
+    - Finding patterns of purchases or medical claims that occur
+    - Identifying combinations of behavior that precede customers dropping their cellular phone service.
+
+### The Aprori algorithm for association rule learning
+
+  - Given k items that can appear or not appear in a set, there are 2^k possible itemsets.
+  - <b>Apriori</b> : algorithm used to efficiently large database for rules.
+    - Strengths
+      - capable of working with large amounts of transactional data
+      - Results in rules that are easy to understand
+      - Useful for data mining and discovering unexpected knowledge in databases.
+    - Weaknesses
+      - Not very helpful for small datasets
+      - Takes effort to separate the true insight from the common sense
+      - Easy to draw spurious conclusions from random patterns
+    - all subsets of a frequent itemset must also be frequent.  This heuristic is known as the <b>Apriori property</b>.
+    - The apriori algorithm uses statistical measures of an itemset's "interestingness" to locate association rules in much larger transaction databases.
+
+### Measuring rule interest - support and confidence
+
+  - Whether or not an association rule is deemed interesting is determined by two statistical measures
+    - support : measure how frequently it occurs in the data.  
+    - confidence : measurement of its predictive power or accuracy.
+      - confidence(x -> y) = support(x, y) / support(x)
+      - proportion of transactions where the presence of item or itemset X results in the presence of item or itemset Y.
+    - <b>strong rules</b> : rules that are both highly supported and confidence
+
+### Building a set of rules with Apriori principle
+
+  - Apriori principle states that all subsets of a frequent itemset must also be frequent.
+    - for instance if {A, B} is frequent, then {A} and {b} must both be frequent.
+  - The process of creating rules occus in two phases :
+    - 1.) identifying all the itemsets that meet a minimum support threshold.
+    - 2.) creating rules from these itemsets using those meeting a minimum confidence threshold.
+
+## Example - identifying frequently purchased groceries with association rules
+
+  - perform market baset analysis of transactional data from a grocery store.
+
+### Step 1 - Collecting data
+
+  - groceries.csv contains 9835 transactions.  or 327 transactions per day.
+
+### Step 2 - exploring and preparing the data
+
+  - Since the data isn't in standard format.  The first 5 rows are :
+    - citrus fruit,semi-finished bread,margarine,ready soups
+    - tropical fruit,yogurt,coffee
+    - whole milk
+    - pip fruit,yogurt,cream cheese,meat spreads
+    - other vegetables,whole milk,condensed milk,long life bakery product
+
+#### Data preparation - creating a sparse matrix for transaction data
+
+```{r}
+# we will be using a sparse matrix.
+#install.packages("arules")
+library(arules)
+
+# arules provides a read.transactions() function
+groceries <- read.transactions("groceries.csv", sep = ",")
+summary(groceries)
+
+# The density value refers to the proportion of non-zero matrix cells.
+
+# The arules package includes some useful features for examining transaction.
+inspect(groceries[1:5])
+
+# To view the support level for the first three items in the grocery data
+itemFrequency(groceries[, 1:3])
+```
+
+#### Visualizing item support - item frequency plots
+
+```{r}
+# if you would like to display items that appear in a minimum proportion of transactions use itemFrequencyPlot()
+itemFrequencyPlot(groceries, support = 0.1)
+
+# or by a number of items
+itemFrequencyPlot(groceries, topN = 20)
+```
+
+#### Visualizing the transaction data - plotting the sparse matrix
+
+```{r}
+# image() function provides a birds eye view of the entire sparse matrix
+image(groceries[1:5])
+
+# Try visualization of a larger random sample
+image(sample(groceries, 100))
+```
+
+### Step 3 - training a model on the data
+
+```{r}
+# With data preparation complete, try to train
+# - Association rule syntax, apriori()
+#   - Finding association rules:
+#     - myrules <- apriori(data = mydata, parameter = list(support = 0.1, confidence = 0.8, minlen = 1))
+#     - data is a sparse item matrix holding transactional data
+#     - support specifies the minimum required rule support
+#     - confidence specifies the minimum required rule confidence
+#     - minlen specifies the minimum required rule items
+#   - Examining association rules:
+#     - inspect(myrules)
+#     - myrules is a set of association rules from the apriori() function
+
+# The default settings of support = 0.1 and confidence = 0.8
+apriori(groceries)
+
+# One approach of the problem of setting a minimum support is to think about the 
+#   smallest number of transactions needed before you would consider a pattern 
+#   interesting.
+# Since 60 out of 9835 equals 0.006, we'll try seeting the support there first.
+
+# Start with a confidence threshold of 0.25, which means that in order to be 
+#   included in the results, the rule has to be correct at least 25 percent of 
+#   the time.
+groceryrules <- apriori(groceries, parameter = list(support = 0.006,
+                        confidence = 0.25, minlen = 2))
+groceryrules
+```
+
+### Step 4 - evaluating model performance
+
+```{r}
+# to recieve a high-level overview of association rules, use summary()
+summary(groceryrules)
+
+# The third column is a metric called lift.  A rule that measures how much more 
+#   likely one item or itemset is to be purchased relative to its typical rate 
+#   of purchase.
+#   lift(X -> Y) = confidence(X -> Y) / support(Y)
+
+# We can look at specific rules using the inspect() function.
+inspect(groceryrules[1:3])
+
+# Common approach is to take the association rules and divide them into three categories
+#   - actionable - that provide clear and useful insights.
+#   - trivial - rules that are so obvious the are not worth mentioning
+#   - inexplicable - if the connection between the items is so unclear that 
+#     figuring out how to use the information is impossible or nearly impossible.
+```
+
+### Step 5 - improving model performance
+
+#### Sorting the set of association rules
+
+```{r}
+# To re-oder the groceryrules object, we can sort() while specifying a value of
+#   "support", "confidence", or "list"
+inspect(sort(groceryrules, by = "lift")[1:5])
+```
+
+#### Taking subsets of association rules
+
+```{r}
+# the subset() function provides a method for searching for subsets of transactions, items, or rules.
+#   - the subset() function is powerful
+#     - items keyword : matches an item appearing anywhere in the rule
+#     - %i% means that a least one of the items must be found in the list you define
+#     - %pin% - partial matching
+#     - %ain% - all in
+#     - subsets can be limited by support, confidence, or lift.
+#     - matching criteria can be combined with standard R logical operators 
+#       such as AND(&), OR(|), and NOT(!)
+
+berryrules <- subset(groceryrules, items %in% "berries")
+inspect(berryrules)
+```
+
+#### Saving association rules to a file or data frame
+
+```{r}
+# To share the results of your market analysis, you can save the rules to csv
+write(groceryrules, file = "groceryrules.csv", sep = ",", 
+      quote = TRUE, row.names = FALSE)
+
+# Convert data frame to data frame
+groceryrules_df <- as(groceryrules, "data.frame")
+str(groceryrules_df)
+```
