@@ -129,7 +129,7 @@ wbcd_test_labels <- wbcd[470:569, 1]
 
 ```{r}
 # - To classify our test instance we will use a k-NN implementation from the class package
-install.packages("class")
+#install.packages("class")
 library(class)
 
 # - Training and classification using the knn() function is performed in a single command with four parameters
@@ -142,7 +142,7 @@ wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test, cl = wbcd_train_labe
 ### Step 4 - evaluating model performance
 
 ```{r}
-install.packages("gmodels")
+#install.packages("gmodels")
 library(gmodels)
 
 # - we need to evaluate how well the predicted classes in wbcd_test_pred vector match the actual values in wbcd_test_lables.

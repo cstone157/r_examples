@@ -1,0 +1,37 @@
+---
+Machine Learning with R
+Chapter 09 - Finding Groups of Data - Clustering with k-means
+---
+
+# Chapter 09 - Finding Groups of Data - Clustering with k-means
+
+  - Clustering : spotting patterns in data.  For example :
+    
+## Understanding clustering
+
+  - 
+
+### Clustering as a machine learning task
+
+  - 
+
+### 
+
+  - 
+
+### 
+
+  - 
+
+### 
+
+  - 
+
+### 
+
+  - 
+
+## 
+
+  - 
+
