@@ -9,27 +9,72 @@ Chapter 09 - Finding Groups of Data - Clustering with k-means
     
 ## Understanding clustering
 
-  - 
-
 ### Clustering as a machine learning task
 
-  - 
+  - In clustering, unlabeled examples are given a new cluster label that has been inferred entirely from the relationships within the data.
+  - <b>Unsupervised classification</b> : classifies unlabeled examples.
+  - Uses boundaries to identify clusters of closely related grouped data points.
 
-### 
+### The k-means clustering algorithm
 
-  - 
+  - The <b>k-means algorithm</b> is perhaps the most often used clusting method.
+    - <b>Strengths</b>
+      - Uses simple principles that can be explained in non-statistical terms
+      - Highly flexible and can be adapted with simple adjustments to address nearly all of its shortcomings
+      - Performs well enough under many real-world use cases
+    - <b>Weaknesses</b>
+      - Not as sophisticated as more modern clustering algorithms
+      - Because it uses an element of random change, it is not guaranteed to find the optimal set of clusters
+      - Requires a reasonable guess as to how many clusters naturally exist in the data
+      - Not ideal for non-spherical clusters or clusters of widely varying density
+  - The k-means algorithm assigns each of the n examples to one of the k clusters, where k in a number that has been determined ahead of time.
+  - The algorithm uses a heuristic process that finds locally optimal solutions.
 
-### 
+### Using distance to assign and update clusters
 
-  - 
+  - The k-means algorithm begins by choosing k points in the feature space to serve as cluster centers.
+  - The k-means algorithm is highly sensitive to starting position of the cluster centers, that means that random chance may have a substantial impact on the final set of clusters.
+  - After choosing the initial cluster centers, the other examples are assigned to the cluster center that is nearest according to the distance function.
+    - Euclidean distance : dist(x, y) = sqrt(sum(x[i] - y[i]))
+  - <b>Voronoi diagram</b> : the dashed lines indicate the boundaries.
+  - The first step of udating the clusters involves shifting the initial centers to a new location, known as <b>centroid</b>, which is calculated as the average position of the points currently assigned to that cluster.
 
-### 
+### Choosing the appropriate number of clusters
 
-  - 
+  - k-means is sensitive to the number of clusters; the choice requires a delicate balance.
+  - Ideally, you will have <i>a priori</i> knowledge (a prior belief) about the troue groupings and you can apply this information to choosing the number of clusters.
+  - Without any prior knowledge, on rule of thumb suggests setting k equal to the square root of (n/2), where n is the number of examples in the data set.
+  - <b>Elbow method</b> : attempts to gauge how to homogeneity or heterogeneity within the clusters changes for various values of k.
+    - The goal is not to maximize homogeneity or minimize heterogeneity endlessly, but rather to find k such that there are diminishing returns beyond that value.
+    - The value of k is known as the <b>elbow point</b>, becuase it looks like an elbow.
 
-### 
+## Finding teen market segments using k-means clustering
 
-  - 
+  - <b>social networking service (SNS)</b> : facebook, tumblr, and instagram.
+    = Given the text of teenagers SNS pages, we can identify groups that share common interest such as sports, religion, or music.
+
+### Step 1 - collecting data
+
+  - Using a random sample of 30000 US high school students who had profiles on a well-known SNS in 2006.
+  - The SNS is unamed and the users should stay anonymous.
+
+### Step 2 - exploring and preparing the data
+
+```{r}
+# read in our data
+teens <- read.csv("snsdata.csv")
+
+# Review the data:
+str(teens)
+
+# There are a bunch of NA's (missing value) in the gener column
+table(teens$gender)
+
+# To see the NA's, specify the useNA
+table(teens$gender, useNA = "ifany")
+
+```
+
 
 ## 
 
