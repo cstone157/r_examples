@@ -6,3 +6,21 @@ Chapter 10 - Evaluating Model Performance
 # Chapter 10 - Evaluating Model Performance
 
   - 
+  
+  
+### 
+
+```{r}
+
+```
+
+### 
+
+```{r}
+
+```
+
+
+## 
+
+  - 

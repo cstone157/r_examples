@@ -104,45 +104,80 @@ mean(teens$age)
 #   missing data.
 mean(teens$age, na.rm = TRUE)
 
-# Calculates the mean age by draduation year after removing the na values:
+# - Calculates the mean age by graduation year after removing the na values:
 aggregate(data = teens, age ~ gradyear, mean, na.rm = TRUE)
 
+# - The mean age differs by roughly one year per change in graduation year.
+# - Use the ave() function to return a vector with the group means repeated
+#   such that the result is equal in length
+ave_age <- ave(teens$age, teens$gradyear, FUN = 
+                 function(x) mean(x, na.rm = TRUE))
 
-
+# - Input the means onto the missing values
+teens$age <- ifelse(is.na(teens$age), ave_age, teens$age)
+summary(teens$age)
 ```
 
-### 
+### Step 3 - training a model on the data
 
 ```{r}
+# - We will use an implementation of k-means in the stats package
+#install.packages("stats")
+library(stats)
 
+# - Clustering syntax
+#   - Finding clusters:
+#     - myclusters <- kmeans(mydata,)
+#     - mydata is a matrix or data frame with the examples to be clustered
+#     - k specifies the desired number of clusters
+#   -Examining clusters:
+#     - myclusters$cluster is a vector of cluster assignments from the kmeans() 
+#       function
+#     - myclusters$centers is a matrix indicating the mean values for each 
+#       feature and cluster combination
+#     - myclusters$size lists the number of examples assigned to each cluster
+
+# - kmeans() function requires a data frame containing only numeric data and a 
+#   parameter specifying the desired number of clusters.
+# - Stare our analysis by considering only the 36 features
+interests <- teens[5:40]
+
+# - Common practice to normalize or z-score standardize the features such that 
+#   each utilizes the same range.
+interests_z <- as.data.frame(lapply(interests, scale))
+
+# - Confirm the transformation worked
+summary(interests$basketball)
+summary(interests_z$basketball)
+
+# - Lastly decide how many clusters to use for segmenting our data.  Start with 5
+RNGversion("3.5.2")
+set.seed(2345)
+teen_clusters <- kmeans(interests_z, 5)
 ```
 
-### 
+### Step 4 - evaluating model performance
 
 ```{r}
+# - Check the size of the clusters.  If the groups are to large or small, they
+#   are not to useful
+teen_clusters$size
 
+# - Look at the centers
+teen_clusters$centers
 ```
 
-### 
+### Step 5 - improving model performance
 
 ```{r}
+# - Ally clusters to the full dataset
+teens$cluster <-teen_clusters$cluster
 
+# exmine how the cluster assignment relates to individual characteristics.
+teens[1:5, c("cluster", "gender", "age", "friends")]
+
+# - Use the aggregate function, look at the demographic characteristics
+aggregate(data = teens, age ~ cluster, mean)
+aggregate(data = teens, female ~ cluster, mean)
+aggregate(data = teens, friends ~ cluster, mean)
 ```
-
-### 
-
-```{r}
-
-```
-
-### 
-
-```{r}
-
-```
-
-
-## 
-
-  - 
-
