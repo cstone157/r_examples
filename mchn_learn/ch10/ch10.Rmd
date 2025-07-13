@@ -5,9 +5,292 @@ Chapter 10 - Evaluating Model Performance
 
 # Chapter 10 - Evaluating Model Performance
 
+  - methods to assess machine learners :
+    - The reasons why predictive accuracy is not sufficient to measure performance, and the performance measures you might use instead
+    - Methods to ensure that the performance measures reasonably reflect a model's ability to predict or forecast unseen cases
+    - How to use R to apply these more useful measures and methods to the predictive models covered in previous chapters.
+  
+## Measuring performance for classification
+
+  - classifier accuracy = correct predictions / total number of predictions
+  - <b>class imbalance problem</b> refers to the trouble associated with data having a large majority of records belonging to a single class
+
+### Understanding a classifier's predictions
+
+  - Types of data at our disposal:
+    - Actual class values
+    - Predicted class values
+    - Estimated probability of the prediction
+  - The goal is to maintain two vectors of data: one holding the correct or actual class values, and the other holding the predicted class values.
+  - Both vectors must have the same number of values stored in the same order.
+  - Most models can supply another piece of useful information; confidence.
+  - The function call to obtain the internal prediction probabilities varies across R packages.
+    - To obtain a single predicted class, you typically set the type = "class
+    - To obtain the prediction probability, the type of parameter should be set to one of "prob", "posterior", "raw", or "probability"
+  - For example, for probabilities for C5.0 classifier built in CH05
+
+```{r}
+# ch05 model
+library(C50)
+credit <- read.csv("../ch05/credit.csv")
+credit$default <- as.factor(credit$default) # convert default to factor
+set.seed(123)
+train_sample <- sample(1000, 900)
+credit_train <- credit[train_sample, ]
+credit_test <- credit[-train_sample, ]
+
+# Original model
+credit_model <- C5.0(credit_train[-17], credit_train$default)
+# Build model, but include probability
+predicted_prob <- predict(credit_model, credit_test, type = "prob")
+
+# To output the Naive Bayes predicted probabilities for SMS span classification 
+#   model (CH04), use type = "raw"
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(e1071)
+
+sms_raw <- read.csv("../ch04/sms_spam.csv", stringsAsFactors = FALSE)
+sms_raw$type <- factor(sms_raw$type) # - Convert type to categorical
+sms_corpus <- VCorpus(VectorSource(sms_raw$text))
+sms_corpus_clean <- tm_map(sms_corpus, content_transformer(tolower))
+sms_corpus_clean <- tm_map(sms_corpus_clean, removeNumbers)
+sms_corpus_clean <- tm_map(sms_corpus_clean, removeWords, stopwords())
+sms_corpus_clean <- tm_map(sms_corpus_clean, removePunctuation)
+sms_corpus_clean <- tm_map(sms_corpus_clean, stemDocument)    # - Apply wordStem function to an entire corpus of text documents
+sms_corpus_clean <- tm_map(sms_corpus_clean, stripWhitespace) # - Finally, strip additional black spaces from the text
+
+sms_dtm <- DocumentTermMatrix(sms_corpus_clean)
+sms_dtm2 <- DocumentTermMatrix(sms_corpus, control = list(
+  tolower = TRUE,
+  removeNumbers = TRUE,
+  stopwords = TRUE,
+  removePunctuation = TRUE,
+  stemming = TRUE
+))
+
+sms_dtm_train <- sms_dtm[1:4169, ]
+sms_dtm_test <- sms_dtm[4170:5559, ]
+# save a pair of vectors with the labels for each of rows in the training and testing matrices.
+sms_train_labels <- sms_raw[1:4169, ]$type
+sms_test_labels <- sms_raw[4170:5559, ]$type
+
+sms_freq_words <- findFreqTerms(sms_dtm_train, 5)
+sms_dtm_freq_train <- sms_dtm_train[ , sms_freq_words]
+sms_dtm_freq_test <- sms_dtm_test[ , sms_freq_words]
+convert_counts <- function(x) {
+  x <- ifelse(x > 0, "Yes", "No")
+}
+sms_train <- apply(sms_dtm_freq_train, MARGIN = 2, convert_counts)
+sms_test <- apply(sms_dtm_freq_test, MARGIN = 2, convert_counts)
+sms_classifier <- naiveBayes(sms_train, sms_train_labels)
+
+# To ouput naive bayes predicted probabilities for SMS spam classification
+sms_test_prob <- predict(sms_classifier, sms_test, type = "raw")
+
+# The predict function returns a probability for each category.
+head(sms_test_prob)
+
+# Pulled the sms_results from github (since they didn't include the code)
+sms_results <- read.csv(url("https://raw.githubusercontent.com/PacktPublishing/Machine-Learning-with-R-Fourth-Edition/refs/heads/main/Chapter%2010/sms_results.csv"))
+
+# - We have to convert the columns to factors
+sms_results$predict_type <- as.factor(sms_results$predict_type)
+sms_results$actual_type <- as.factor(sms_results$actual_type)
+head(sms_results)
+
+# For these six test cases, the predicted and actual SMS message types agree.
+# Use the subset() cuntion to identify a few records, further from 0 and 1
+head(subset(sms_results, prob_spam > 0.40 & prob_spam < 0.60))
+
+# Another look
+head(subset(sms_results, actual_type != predict_type))
+```
+
+### A closer look at confusion matrices
+
+  - <b>Confusion matrix</b>: a table taht categorizes predictions according to whether they match the actual value.
+    - The relationship between positive class and negative class predictions depicted in a 2x2 table:
+    - <b>True positive (TP)</b>: Correctly classified as the class of interest
+    - <b>True negative (TN)</b>: Correctly classified as not the class of interest
+    - <b>False positive (FP)</b>: Incorrectly classified as the class of interest.
+    - <b>False negative (FN)</b>: 
+
+### Using confusion matrices to measure performance
+
+  - <b>Success rate</b>: accuracy = (TP + TN) / (TP + TN + FP + FN)
+  - <b>Error rate</b>: error rate = (FP + FN) / (TP + TN + FP + FN) = 1 - accuracy
+
+```{r}
+# An easy way to tabulate a classifier's predictions into a confusion matrix
+table(sms_results$actual_type, sms_results$predict_type)
+
+# You could also use the CrossTable() function in the gmodels package offers a customization solution.
+#install.packages("gmodels")
+library(gmodels)
+CrossTable(sms_results$actual_type, sms_results$predict_type)
+
+# Use the confusion matrix to obtain the accuracy and error rate.
+# (TP + TN) / (TP + TN + FP + FN)
+(152 + 1203) / (152 + 1203 + 4 + 31)
+
+# Calculate the error rate : (FP + FN) / (TP + TN + FP + FN)
+(4 + 31) / (152 + 1203 + 4 + 31)
+```
+
+## Beyond accuracy - other measures of performance
+
+  - <b>Classification and Regression Training</b>: package caret includes functions for computing many  such performance measures.
+  
+```{r}
+# #install.packages("caret")
+library(caret)
+# The caret package adds another function to create a confusion matrix.
+confusionMatrix(sms_results$predict_type,
+                sms_results$actual_type, positive = "spam")
+```
+
+### The kappa statistic
+
+  - <b>kappa statistic</b>: adjust accuracy by accounting for the possibility of a correct prediction by change alone.
+  - Based on how model is to be used, one common interpretation is show as follows:
+    - Poor agreement = less than 0.20
+    - Fair agreement = 0.20 to 0.40
+    - Moderate agreement = 0.40 to 0.60
+    - Good agreement = 0.60 to 0.80
+    - Very good agreement = 0.80 to 1.00
+  - Pr(a) refers to the proportion of actual agreement
+  - Pr(e) refers to the expected agreement between the classifier and true values
+  - k = (Pr(a) - Pr(e)) / (1 - Pr(e))
+  
+```{r}
+total = 1390
+TP = 1203
+TN = 152
+FP = 31
+FN = 4
+# Add add all instance where the predicted type and actual SMS type agree is Pr(a)
+pr_a <- (TP / total) + (TN / total)
+
+# Probability of both choosing ham is: P(actual_type is ham) * P(predicted_type is ham)
+# Probability of both choosing spam is: P(actual_type is spam) * P(predicted_type is spam)
+pr_e <- ((TP + FN) / total) * ((TP + FP) / total) + ((TN + FN) / total) * ((TN + FP) / total)
+
+k <- (pr_a - pr_e) / (1 - pr_e)
+pr_a
+pr_e
+k
+
+# - The kappa() function in Visualizing Categorical Data(vcd) package using confusion
+#   matrix of predicted and actual values
+#install.packages("vcd")
+library(vcd)
+Kappa(table(sms_results$actual_type, sms_results$predict_type))
+
+# The kappa2 function in Interrater Reliability (irr) package can be used to calculate kappa from vectors.
+#install.packages("irr")
+library(irr)
+kappa2(sms_results[1:2])
+```
+
+### Sensitivity and specificity
+
+  - <b>Sensitivity</b> of a model (<b>true positive rate</b>), measures the proportion of positive examples that were correctly classified.
+    - sensitivity = TP / (TP + FN)
+  - <b>Specificity</b> of a model (<b>true negative rate</b>), proportion of negative examples that were correctly classfied.
+    - specificity = TN / (TN + FP)
+
+```{r}
+# - Calculation for sensitivity/spcificity:
+spec <- TN / (TN + FP)
+sens <- TP / (TP + FN)
+
+# - The caret package provides function fo calculating sensitivity and specificity:
+library(caret)
+sensitivity(sms_results$predict_type, sms_results$actual_type, positive = "spam")
+specificity(sms_results$predict_type, sms_results$actual_type, positive = "ham")
+
+sensitivity
+specificity
+```
+
+### Precision and recall
+
+  - <b>Precision</b> (<b>positive predictive value</b>) is defined as the proportion of positive examples that are truly positive.
+    - precision = TP / (TP + FP)
+  - <b>Recall</b> is ameasure of how complete the results are:
+    - recall = TP / (TP + FN)
+
+```{r}
+# - calculate precision and recall
+prec <- 152 / (152 + 4)
+rec <- 152 / (152 + 31)
+
+# - The caret packa can be used to compute either of these measures
+library(caret)
+posPredValue(sms_results$predict_type, sms_results$actual_type, positive = "spam")
+# Recall uses the sensitivity() function that we used earlier
+sensitivity(sms_results$predict_type, sms_results$actual_type, positive = "spam")
+```
+
+### The F-meansure
+
+  - <b>F-measure</b> (also called <b>F_1 score</b> or <b>F-Score</b>) : combines precision and recall using <b>harmonic mean</b>, a type of average that is used for rates of change.
+  - F-measure = (2 * precision * recall) / (recall + precision) = (2 * TP) / (2 * TP + FP + FN)
+  
+```{r}
+f <- (2 * prec * rec) / (prec + rec)
+```
+
+### Visualizing performance tradeoffs with ROC curves
+
+  - <b>Receiver operating characteristic (ROC) curve</b> is used to examine the tradeoff between the detection of true positives while avoiding the false positives.
+    - Plots True-Positive Rate on the y-axis vs. the False-Positive-Rage (1 - specificity) on the x-axis.
+  - The closer the curve is to the perfect classifier, the better it is at identifying positive values.
+    - This can be measured using statistic known as the <b>area under the ROC curve (AUC)</b>.
+    - AUC ranges from 0.5 (a classifier with no predictive vlaue), to 1.0 (for a perfect classifier).
+      - <b>A</b>: Outstanding = 0.9 to 1.0
+      - <b>B</b>: Excellent/Good = 0.8 to 0.9
+      - <b>C</b>: Acceptable/Fair = 0.7 to 0.8
+      - <b>D</b>: Poor = 0.6 to 0.7
+      - <b>E</b>: No Discrimination = 0.5 to 0.6
+  - The pROC package proves an easy-touse set of functions for creating ROC curves.
+
+```{r}
+#install.packages("pROC")
+library(pROC)
+
+#sms_roc <- roc(sms_results$prob_spam, sms_results$actual_type)
+sms_roc <- roc(predictor = sms_results$prob_spam, response = sms_results$actual_type) # had to specify predictor/response
+plot(sms_roc, main = "ROC curve for SMS spam filter", col="blue", lwd = 2, lecacy.axes = TRUE)
+
+# To compare this model's performance to other models, use knn() function
+sms_results_knn <- read.csv(url("https://raw.githubusercontent.com/PacktPublishing/Machine-Learning-with-R-Fourth-Edition/refs/heads/main/Chapter%2010/sms_results_knn.csv"))
+sms_roc_knn <- roc(sms_results$actual_type, sms_results_knn$p_spam)
+plot(sms_roc_knn, col = "red", lwd = 2, add = TRUE)
+
+# to confirm that KNN underperforms the naive bayes function use auc function
+auc(sms_roc)
+auc(sms_roc_knn)
+```
+
+### Estimating future performance
+
   - 
-  
-  
+
+###
+
+  - 
+
+###
+
+  - 
+
+###
+
+  - 
+
 ### 
 
 ```{r}
