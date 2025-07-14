@@ -275,35 +275,85 @@ auc(sms_roc)
 auc(sms_roc_knn)
 ```
 
-### Estimating future performance
+## Estimating future performance
 
-  - 
+  - <b>Resubstitution error</b>: occurs when the training data is incorrectly predicted in spite of the model being built directly from this data.
+    - not very useful marker of future performance.
+  - Instead of relying on resubstitution error, a better practice is to evaluate a model's performance on data it has not yet seen.
 
-###
+### The holdout method
 
-  - 
-
-###
-
-  - 
-
-###
-
-  - 
-
-### 
+  - <b>holdout method</b>: procedure of partitioning data into training and test data-sets.
+    - <b>training data-set</b>: used to generate the model.
+    - <b>test data-set</b>: generate predictions for evaluation.
+    - <b>validation data-set</b>: used for iterating and refining the model or models chosen, leaving the test dataset to be used only once a final step to report an estimated error rate for future predictions..
 
 ```{r}
+# - Create a vector of randomly ordered row IDs from one to 1000 using runif() function
+# - The order function then returns a vector indicating the rank order of the 100 random numbers
 
+random_ids <- order(runif(1000))
+
+# - the random IDs are used to divide the credit data frame into 500, 250, and 250 records
+credit_train <- credit[random_ids[1:500], ]
+credit_validate <- credit[random_ids[501:750], ]
+credit_test <- credit[random_ids[751:1000], ]
+
+# - One of the problem with holdout sampling that each partition may have a larger or smaller proportion of some classes.
+# - In order to reduce the chance of this occurring, a technique called stratified random sampling
+#   - guarantees that the random partitions have nearly the same proportion of each class as the full data-set
+# - The caret package provides a createDataPartition() function that creates partitions based on stratified holdout sampling.
+in_train <- createDataPartition(credit$default, p = 0.75, list = FALSE)
+credit_train <- credit[in_train, ]
+credit_test <- credit[-in_train, ]
 ```
+  
+  - stratified sampling does not guarantee other types of representativeness.
+  - <b>repeated holdout</b>: special case of the holdout method that uses the average result from several random holdout samples to evaluate a model's performance.
+  
+### Cross-validation
 
-### 
+  - <b>k-fold cross-validation (k-fold CV)</b>: randomly divides the data into k completely separate random partitions called <b>folds</b>.
+    - most common convention is to use 10-fold.
 
 ```{r}
+folds <- createFolds(credit$default, k = 10)
+str(folds)
 
+# - Create training and test data-sets to build and evaluate a model, and additional step is needed.
+credit01_test <- credit[folds$Fold01, ]
+credit01_train <- credit[-folds$Fold01, ]
+
+# We'll estimate the kappa statistic for a C5.0 decision tree model of the credit data using 10-fold CV.
+library(caret)
+library(C50)
+library(irr)
+
+# Create list of 10 folds
+RNGversion("3.5.2")
+set.seed(123)
+folds <- createFolds(credit$default, k = 10)
+
+# We will apply a series of identical setps to the list of folds using lapply() function
+cv_results <- lapply(folds, function(x) {
+  credit_train <- credit[-x, ]
+  credit_test <- credit[x, ]
+  credit_model <- C5.0(default ~ ., data = credit_train)
+  credit_pred <- predict(credit_model, credit_test)
+  credit_actual <- credit_test$default
+  kappa <- kappa2(data.frame(credit_actual, credit_pred))$value
+  return (kappa)
+})
+
+str(cv_results)
+
+# one more step in 10-fold-cv process.  Calculate the average of these 10 values
+mean(unlist(cv_results))
 ```
 
+### Bootstrap sampling
 
-## 
-
-  - 
+  - <b>bootstrap sampling (bootstrap or bootstrapping)</b>: statistical methods that use random samples of data to estimate properties of a larger set.
+    - in ML/AI it implies the creation of several randomly selected training and test data-sets, which are then used to estimate performance statistics.
+    - uses <b>sampling with replacement</b>.
+    - the probability of any given instance is included in the training data-set is 63.2 percent.
