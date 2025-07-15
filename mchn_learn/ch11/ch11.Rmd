@@ -1,0 +1,87 @@
+---
+Machine Learning with R
+Chapter 11 - Improving Model Performance
+---
+
+  - In this chapter you will learn:
+    - How to automate model performance tuning by ssystematically searching for optimal set of training conditions
+    - Methods for combining models into groups that use teamwork to tackle tough learning tasks
+    - How to apply a variant of decision trees that has quickly become popular due to its impressive performance
+
+## Tuning stock models for better performance
+
+  - <b>parameter tuning</b> : adjusting the model options to identify the best fit.
+
+### Using caret for automated parameter tuning
+
+  - Automated parameter tuning requires you consider three questions:
+    - What type of machine learning model (and specific implementation) should be trained on the data?
+    - Which model parameters can be adjusted, and how extensively should they be tuned to find the optimal settings?
+    - What criteria should be used to evaluate the models to find the best candidate?
+  - For a complete list of models and corresponding tuning parameters covered by caret refer to http://topepo.github.io/caret/modelList.html
+  - modelLookup() function can be used to lookup parameters for tuning
+
+```{r}
+#install.packages("caret")
+library(caret)
+
+modelLookup("C5.0")
+```
+
+  - By default, caret searches at most three values for each of the models p parameters.
+  - The third and final step in automatic model tuning involves identifying the best model among the candidates.
+
+### Creating a simple tuned model
+
+  - We'll use the C5.0 decision trees with the credit model to optimize this model.
+
+```{r}
+library(caret)
+RNGversion("3.5.2")
+set.seed(300)
+
+
+```
+
+## 
+
+  - 
+
+## 
+
+  - 
+
+## 
+
+  - 
+
+## 
+
+  - 
+
+## 
+
+  - 
+
+## 
+
+  - 
+
+## 
+
+  - 
+
+## 
+
+  - 
+
+### 
+
+```{r}
+
+```
+
+## 
+
+  - 
+
