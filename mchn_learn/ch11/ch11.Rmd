@@ -36,18 +36,87 @@ modelLookup("C5.0")
   - We'll use the C5.0 decision trees with the credit model to optimize this model.
 
 ```{r}
+credit <- read.csv("../ch05/credit.csv")
+credit$default<-as.factor(credit$default)
+
 library(caret)
 RNGversion("3.5.2")
 set.seed(300)
+m <- train(default ~ ., data = credit, method = "C5.0")
+m
 
+#   - Four main components in the output:
+#     - The first section is a brief description of the input data-set.
+#     - The second section is a report of the pre-processing and re-sampling methods 
+#       applied
+#     - The third section is a list of the candidate models evaluated
+#     - The fourth section is a choice of the best model.
+#   - The train() function uses its tuning parameters to build a model on the full 
+#     data-set, which is stored in the m list object as m$finalModel.
+p <- predict(m, credit)
 
+# The resulting vector of predictions works as expected, create a confusion matrix:
+table(p, credit$default)
+
+# - All data preparation steps applied by the train() function will be similarly 
+#   applied to the data used for predictions.
+# - The prediction function provides a standardized interface for obtaining predicted
+#   class values
+head(predict(m, credit))
+
+# - To obtain the estimated probabilities for each class, use the type = "prob".
+head(predict(m, credit, type = "prob"))
 ```
 
-## 
+### Customizing the tuning process
 
-  - 
+  - You can modify the model selection process.
+  - The trainControl() function is used to create a set of configuration options known as a <b>control object</b>.
+  - For the trainControl() function, the method parameter is used to set the resampling method, such as holdout sampling or k-fold CV.
 
-## 
+<table>
+  <tr><th>Re-sampling Method</th><th>Method Name</th><th>Additional Options and Default Values</th></tr>
+  <tr><td>Holdout sampling</td><td>LOGOCV</td><td>p = 0.75 (training data proportion)</td></tr>
+  <tr><td>k-fold CV</td><td>CV</td><td>number = 10 (number of folds)</td></tr>
+  <tr><td>Repeated k-fold CV</td><td>repeatedcv</td><td>number = 10 (number of folds)<br />repeats = 10 (number of iterations)</td></tr>
+  <tr><td>Bootstrap sampling</td><td>boot</td><td>number = 25 (resampling iterations)</td></tr>
+  <tr><td>0.632 bootstrap</td><td>boot632</td><td>number = 25 (resampling iterations)</td></tr>
+  <tr><td>Leave-one-out CV</td><td>LOOCV</td><td>None</td></tr>
+</table>
+
+  - The selectionFunction parameter is used to specify the function that will choose the optimal model among the various candidates.
+
+```{r}
+# - To create a control object named ctrl that uses 10-fold CV and the oneSE 
+#   selection function, use the following command (note that number = 10 is 
+#   included only for clarity; since this is the default value for method = "cv")
+
+ctrl <- trainControl(method = "cv", number = 10,
+                     selectionFunction = "oneSE")
+
+# - The next step in defining our experiment is to create the grid of parameters
+#   o optimize.
+# - We can use the expand.grid() function, which creates data frames from the 
+#   combinations of all values supplied.
+grid <- expand.grid(model = "true",
+                    trials = c(1, 5, 10, 15, 20, 25, 30, 35),
+                    winnow = FALSE)
+grid()
+
+# - The train() function will build a candidate model for evaluation using each 
+#   row's combination of model parameters.
+# - Given this search grid and control list created previously
+RNGversion("3.5.2")
+set.seed(300)
+m <- train(default ~ ., data = credit, method = "C5.0",
+           metric = "Kappa", trControl = ctrl, 
+           tuneGrid = grid)
+
+# - This results in an object that we can view by typing its name:
+m
+```
+
+### Impriving model performance with meta-learning
 
   - 
 
