@@ -116,17 +116,43 @@ m <- train(default ~ ., data = credit, method = "C5.0",
 m
 ```
 
-### Impriving model performance with meta-learning
+## Impriving model performance with meta-learning
 
-  - 
+  - It is possible to combine several models to form a powerful team.
+  - The technique of combining and managing the predictions of multiple models fills into a wider set of <b>meta-learning</b> methods.
 
-## 
+### Understanding ensembles 
 
-  - 
+  - The meta-learning approach that utilizes a similar principle of creating a varied team of experts is known as an <b>ensemble</b>.
+  - The <b>allocation function</b> dictates how much of the training data each model receives.
+    - The allocation function can increase diversity by artificially varying the input data to bias the resulting learners, even if they are the same type.
+  - The <b>combination function</b> : governs how disagreements among the predictions are reconciled.
+    - After the ensemble's models are constructed, they can be used to generate a set of predictions, which must be managed in some way.
+    - For example, the ensemble might use a majority vote to determine the final prediction, or it could use a more complex strategy such as weighting each model's votes based on its prior performance.
+    - The process of using the predictions of several models to train a final arbiter model is known as <b>stacking</b>.
+  - One of the benefits of using ensembles is that they allow you to spend less time in pursuit of a single best model.  Number of performance advantages over single models
+    - <b>Better generalizability of future problems</b>: the opinions of several learners are incorporated into a single final prediction, no single bias is able to dominate.
+    - <b>Improved performance on massive or minuscule data-sets</b>: ensembles also do well on the smallest datasets because resampling methods like bootstrapping are inherently part of many ensemble designs.
+    - <b>The ability to synthesize data from distinct domains</b>: there is no one-size-fits-all learning algorithm, the ensemble's ability to incorporate evidence from multiple types of learners is increasingly important
+    - <b>A more nuanced understanding of difficult learning tasks</b>: Real-world phenomena are often extremely complex, with many interacting intricacies.
 
-## 
+### Bagging
 
-  - 
+  - One of the first ensemble methods to to game acceptance use a technique called <b>bootstrap aggregating</b> or <b>bagging</b>.
+  - Bagging generates a number of training data-sets by bootstrap sampling the original training data.  These data-sets are then used to generate a set of models using a single learning algorithm.  The model's predictions are combined using voting or averaging.
+  - It can perform quite well as long as it used with relatively <b>unstable</b> learners, those generating models that tend to change substantially when the input data changes only slightly.
+  - The ipred package offers a classic implementation of bagged decision trees.
+
+```{r}
+#install.packages("ipred")
+library(ipred)
+RNGversion("3.5.2")
+set.seed(300)
+mybag <- bagging(default ~ ., data = credit, nbagg = 25)
+
+# - The model works as expected with the predict() function:
+credit_pred <- predict(mybag, credit)
+```
 
 ## 
 
