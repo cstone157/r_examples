@@ -103,13 +103,13 @@ grid <- expand.grid(model = "true",
                     winnow = FALSE)
 grid()
 
-# - The train() function will build a candidate model for evaluation using each 
+# - The train() function will build a candidate model for evaluation using each
 #   row's combination of model parameters.
 # - Given this search grid and control list created previously
 RNGversion("3.5.2")
 set.seed(300)
 m <- train(default ~ ., data = credit, method = "C5.0",
-           metric = "Kappa", trControl = ctrl, 
+           metric = "Kappa", trControl = ctrl,
            tuneGrid = grid)
 
 # - This results in an object that we can view by typing its name:
@@ -152,11 +152,54 @@ mybag <- bagging(default ~ ., data = credit, nbagg = 25)
 
 # - The model works as expected with the predict() function:
 credit_pred <- predict(mybag, credit)
+# - Confusion matrix
+table(credit_pred, credit$default)
+
+# - Use bagged trees with 10-fold CV using train() function in caret package,
+#   to test future performance
+library(ipred)
+RNGversion("3.5.2")
+set.seed(300)
+ctrl <- trainControl(method = "cv", number = 10)
+train(default ~ ., data = credit, method = "treebag", trControl = ctrl)
 ```
 
-## 
+## Boosting
 
-  - 
+  - <b>boosting</b> : it boosts performance of weak learners to attain the performance of stronger learners.
+  - Similar to bagging, boosting uses ensembles of models trained on resampled data and a vote to determine the final prediction.
+  - <b>AdaBoost</b> or <b>adaptive boosting</b>, the algorithm is based on the idea of generating weak learners that iteratively learn a larger portion of the difficult-to-classify examples in the training data by paying more attention.
+  - The <b>AdaBoost.M1</b> algorithm provides another tree-based implementation of AdaBoost for classification.
+  
+```{r}
+#install.packages("adabag")
+library(adabag)
+
+RNGversion("3.5.2")
+set.seed(300)
+m_adaboost <- boosting(default ~ ., data = credit)
+
+# - Use predict
+p_adaboost <- predict(m_adaboost, credit)
+
+# - it returns an object with information about the model
+head(p_adaboost$class)
+
+# - A confusion matrix can be found in the confusion sub-object:
+p_adaboost$confusion
+
+# - For a more accurate assessment of performance on unseen data, we need to use 
+#   another evaluation method.
+RNGversion("3.5.2")
+set.seed(300)
+adaboost_cv <- boosting.cv(default ~ ., data = credit)
+adaboost_cv$confusion
+
+# - We can find the kappa statistic using the vcd package
+#install.packages("vcd")
+library(vcd)
+Kappa(adaboost_cv$confusion)
+```
 
 ## 
 
