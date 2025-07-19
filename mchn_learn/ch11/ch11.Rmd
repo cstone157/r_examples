@@ -201,13 +201,31 @@ library(vcd)
 Kappa(adaboost_cv$confusion)
 ```
 
-## 
+## Random forests
 
-  - 
+  - <b>random forests</b> or <b>decision tree forests</b>: focuses on ensembles of decision trees.  Combines the principles of bagging with random feature selection to add additional diversity to the decision tree models.
+    - <b>Strengths</b>:
+      - An all-purpose model that performs well on most problems
+      - Can handle noisy or missing data, as well as categorical or continuous features
+      - Selects only the most important features
+      - Can be used on data with an extremely large number of features or examples
+    - <b>Weaknesses</b>:
+      - Unlike a decision tree, the model is not easily interpretable
 
-## 
+### Training random forests
 
-  - 
+  - Random forest syntax
+    - Building the classifier:
+      - m <- randomForest(train, class, ntree = 500, mtry = sqrt(p))
+      - train is a data frame containing training data
+      - class is a factor vector with the class for each row in the training data
+      - ntree is an integer specifying the number of trees to grow
+      - mtry is an optional integer specifying the number of features to randomly select at each split (uses sqrt(p) by default, where p is the number of features in the data)
+    - Making predictions
+      - p <- predict(m, test, type = "response")
+      - m is a model trained by the randomForest() function
+      - test is a data frame containing test data with the same features as the training data used to build the classifier
+      - type is either "response", "prob", or "votes" and is used to indicate whether the predictions vector should contain the predicted class, the predicted probabilities, or a matrix of vote counts, respectively.
 
 ## 
 
