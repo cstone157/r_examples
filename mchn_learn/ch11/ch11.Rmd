@@ -227,6 +227,15 @@ Kappa(adaboost_cv$confusion)
       - test is a data frame containing test data with the same features as the training data used to build the classifier
       - type is either "response", "prob", or "votes" and is used to indicate whether the predictions vector should contain the predicted class, the predicted probabilities, or a matrix of vote counts, respectively.
 
+```{r}
+#install.packages("randomForest")
+library(randomForest)
+
+RNGversion("3.5.2")
+set.seed(300)
+
+```
+
 ## 
 
   - 
