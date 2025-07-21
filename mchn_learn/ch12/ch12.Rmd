@@ -1,0 +1,23 @@
+---
+Machine Learning with R
+Chapter 12 - Specialized Machine Learning Topics
+---
+
+  - <b>Topics</b>:
+    - Unstructured or proprietary formats such as web pages, web APIs, spread-sheets, or databases
+    - From a specialized domain such as bioinformatics or social network analysis
+    - Too large to fit in memory or unable to complete analyses in a reasonable time
+
+## Managining and preparing real-world data
+
+  - The process of collecting, merging, sorting, filtering and reformatting data to meet requirements is called <b>data mugging</b> or <b>data wrangling</b>.
+
+### Making data "tidy" with the tidyverse packages
+
+  - 
+
+### 
+
+`  - 
+```{r}
+```

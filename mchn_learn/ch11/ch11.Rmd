@@ -234,11 +234,80 @@ library(randomForest)
 RNGversion("3.5.2")
 set.seed(300)
 
+rf <- randomForest(default ~ ., data = credit)
+# - Look at the summary
+rf
 ```
 
-## 
+  - This confusion matrix does not show re-substitution error.  Instead, it reflects the <b>out-of-bag error rate</b> (list in the output as OOB estimate of error rate) which, unlike re-substitution error, is an unbiased estimate of the test set error.
+    - The out-of-bag estimate is computed during the construction of the random forest.
+    - At the end of the forest construction, for each of the 1000 examples in the dataset, the trees that did not use the example in training are allowed to make a prediction.
+  - To calculate the kappa statistic on the out-of-bag predictions, we can use the function in the cvd pakage as fllows.
 
-  - 
+```{r}
+#install.packages("vcd")
+library(vcd)
+Kappa(rf$confusion[1:2, 1:2])
+```
+
+
+### Evaluating random forest performance in a simulated competition
+
+  - randomForest() is supported by caret, which allows us to optimize the model wwhile at the same time calculating performance measures beyond the out-of-bag error rate.
+  
+```{r}
+# - First we'll set the 'savePredictions' and 'classProbs' parameters to TRUE, 
+#   which sames the holdout sample predictions and predicted probabilities for 
+#   plotting the ROC curve late.
+# - Then, we'll also set the 'summaryFunction' to 'twoClassSummary', which is a 
+#   'caret' function that computes performance metrics like AUC.
+
+#install.packages("caret")
+library(caret)
+ctrl <- trainControl(method = "repeatedcv",
+                     number = 10, repeats = 10,
+                     selectionFunction = "best",
+                     savePredictions = TRUE,
+                     classProbs = TRUE,
+                     summaryFunction = twoClassSummary)
+
+# - Next we'll setup the tuning grid for the random forest.
+#   - the only parameter is 'mtry', which defines how many features are randomly 
+#     selected at each split.
+grid_rf <- expand.grid(mtry = c(2, 4, 8, 16))
+
+# - Supply the resulting grid to the train() function
+RNGversion("3.5.2")
+set.seed(300)
+m_rf <- train(default ~ ., data = credit, method = "rf",
+              metric = "ROC", trControl = ctrl,
+              tuneGrid = grid_rf)
+
+# - Compare the best forest to the best boosted decision tree
+# - When the random forests are finished training, we'll compare the best forest
+#   to the best boosted decision tree among trees with 10, 25, 50, and 100
+#   iterations using the caret package
+grid_c50 <- expand.grid(model = "tree",
+                        trials = c(10, 25, 50, 100),
+                        winnow = FALSE)
+RNGversion("3.5.2")
+set.seed(300)
+m_c50 <- train(default ~ ., data = credit, method = "C5.0",
+               metric = "ROC", trControl = ctrl,
+               tuneGrid = grid_c50)
+
+# - Compare the two approaches
+m_rf
+m_c50
+
+# - Visualize their performance, we use the pROC package
+#install.packages("pROC")
+library(pROC)
+roc_rf <- roc(m_rf$pred$obs, m_rf$pred$yes)
+roc_c50 <- roc(m_c50$pred_obs, m_c50$pred$yes)
+plot(roc_rf, col = "red", legacy.axes = TRUE)
+plot(roc_c50, col = "blue", add = TRUE)
+```
 
 ### 
 
