@@ -14,10 +14,29 @@ Chapter 12 - Specialized Machine Learning Topics
 
 ### Making data "tidy" with the tidyverse packages
 
+  - <b>tidyverse</b>: collection of packages devoted to tidy data.
+    - install.packages("tidyverse")
+
+### Generalizing tabular data structures with tibble
+
+  - <b>tibble</b> : acts almost like a data frame put includes additional functionality.
+    - Convert a tibble to a data frame, using the as.data.frame() function.
+    - Convert a dataframe to a tibble using the as_tibble() function.
+  
+```{r}
+library(tibble)
+credit <- read.csv("../ch05/credit.csv")
+credit_tbl <- as_tibble(credit)
+
+# - Take a look at the tibble object
+credit_tbl
+```
+
+### Speeding and simplifying data preparation with dplyr
+
   - 
 
 ### 
 
-`  - 
-```{r}
-```
+  - 
+
