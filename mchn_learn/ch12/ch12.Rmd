@@ -34,7 +34,32 @@ credit_tbl
 
 ### Speeding and simplifying data preparation with dplyr
 
-  - 
+  - The dplyr package is the heart of tidyverse.
+    - Focus's on data frames rather than vectors, new operators are introduced that allow common data transformations.
+    - The dplyr package makes reasonable assumptions about data frames
+    - Key portions are written in C++.
+    - R data frames are limited to available memory.  With dplyr, tibbles can be linked transparently to disk-based databases.
+  
+  - filter() rows of data by values of columns
+  - select() columns of data by name
+  - mutate() columns into new columns by transforming the values
+  - summarize() rows of data by aggregating values
+  - arrange() rows of data by sorting the values
+  
+  - The 5 dplyr verbs are brought together in  sequences using a <b>pipe</b> operator.  Represented by "%>%"
+
+  - Example : examine loan applicants 21 years or older, and find their average loan duration (in years), grouped by whether or not the applicants defaulted.
+```{r}
+library(dplyr)
+
+credit_tbl %>%
+  filter(age >= 21) %>%
+  mutate(years_loan_duration = 
+           months_loan_duration / 12) %>%
+  select(default, years_loan_duration) %>%
+  group_by(default) %>%
+  summarize(mean_duration = mean(years_loan_duration))
+```
 
 ### 
 
