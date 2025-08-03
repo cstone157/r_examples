@@ -1,0 +1,10 @@
+---
+An Introduction to Statistical Learning (with Applications in R)
+Chapter 02 - Statitical Learning
+---
+
+# 2.1 - What is Statistical Learning?
+
+# 2.2 - Assessing Model Accuracy
+
+# 2.3 - Lab: Introduction to R
