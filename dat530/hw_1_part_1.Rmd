@@ -1,0 +1,19 @@
+---
+ADVANCED STATISTICAL METHODS - DAT530B
+HW 1 - Part 1 
+---
+
+# 
+
+## X.) Setup
+
+- Install AmesHousing package for RStudio
+- $ install.packages("AmesHousing")
+
+```{r}
+library(AmesHousing)
+ames_data <- ames_raw
+data_processed <- make_ames()
+
+print(ames_data)
+```
