@@ -10,10 +10,35 @@ HW 1 - Part 1
 - Install AmesHousing package for RStudio
 - $ install.packages("AmesHousing")
 
+## X.) Execution
+
+- Load the AmesHousing library, and store the ames_raw into a dataframe, and print out all of the column names. (not showing the column data types so as to not take up too much )
+
 ```{r}
 library(AmesHousing)
 ames_data <- ames_raw
-data_processed <- make_ames()
-
-print(ames_data)
+print(colnames(ames_raw))
+#print(str(ames_raw))
 ```
+
+- The columns, other than 'SalePrice', that be default are numeric (bassed on <code>str(ames_raw)</code>) are:
+  - Order, PID, 'Lot Frontage', 'Lot Area', 'Overall Qual', 'Overall Cond', 'Year Built', 'Year Remod/Add', 'Mas Vnr Area', 'BsmtFin SF 1', 'BsmtFin SF 2', 'Bsmt Unf SF', 'Total Bsmt SF', '1st Flr SF', '2nd Flr SF', 'Low Qual Fin SF', 'Gr Liv Area', 'Bsmt Full Bath', 'Bsmt Half Bath', 'Full Bath', 'Half Bath', 'Bedroom AbvGr', 'Kitchen AbvGr', 'TotRms AbvGrd', 'Fireplaces', 'Garage Yr Blt', 'Garage Cars', 'Garage Area', 'Wood Deck SF', 'Open Porch SF', 'Enclosed Porch', '3Ssn Porch', 'Screen Porch', 'Pool Area', 'Misc Val', 'Mo Sold', 'Yr Sold'
+- Store our column name for the feature we are going to be predicting.  And take a look at the column values
+
+```{r}
+to_predict = "SalePrice"
+print(ames_raw[, to_predict])
+```
+
+- Prior to running any predictions, let's plot out a couple of differnt columns
+
+```{r}
+plot(ames_raw$`Lot Area`, ames_raw$SalePrice)
+linear_model <- lm(SalePrice ~ `Lot Area`, data = ames_raw)
+abline(linear_model, col = "red") 
+```
+
+
+
+
+
