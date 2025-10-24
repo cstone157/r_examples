@@ -25,24 +25,24 @@ print(colnames(ames_raw))
   - Since our columns have spaces in them it makes it a bit of a pain to work with, so let's convert them all to lowercase and strip the spaces out
 
 ```{r}
-new_colnames <- list()
-for (col_name in colnames(ames_data)) {
-  # Convert to lowercase
-  lower_case_name <- tolower(ames_data)
-  # Replace spaces with underscores
-  updated_name <- gsub(" ", "_", lower_case_name)
-  new_colnames <- c(new_colnames, updated_name)
-}
+#new_colnames <- list()
+#for (col_name in colnames(ames_data)) {
+#  # Convert to lowercase
+#  lower_case_name <- tolower(ames_data)
+#  # Replace spaces with underscores
+#  updated_name <- gsub(" ", "_", lower_case_name)
+#  new_colnames <- c(new_colnames, updated_name)
+#}
 
-colnames(ames_data) <- new_colnames
-print(new_colnames)
-print(colnames(ames_raw))
+#colnames(ames_data) <- new_colnames
+#print(new_colnames)
+#print(colnames(ames_raw))
 ```
 
 
 ```{r}
-to_predict = "SalePrice"
-print(ames_raw[, to_predict])
+#to_predict = "SalePrice"
+#print(ames_raw[, to_predict])
 ```
 
 - Prior to running any predictions, let's plot out a couple of differnt columns
