@@ -47,16 +47,18 @@ print(ames_raw[, to_predict])
 - Prior to running any predictions, let's plot out a couple of differnt columns
 
 ```{r}
-#library(ggplot2)
+library(ggplot2)
 
 #x_axises <- c("Lot Frontage", 'Lot Area', 'Overall Qual', 'Overall Cond', 'Year Built', 'Year Remod/Add', 'Mas Vnr Area', 'BsmtFin SF 1', 'BsmtFin SF 2', 'Bsmt Unf SF', 'Total Bsmt SF', '1st Flr SF', '2nd Flr SF', 'Low Qual Fin SF', 'Gr Liv Area', 'Bsmt Full Bath', 'Bsmt Half Bath', 'Full Bath', 'Half Bath', 'Bedroom AbvGr', 'Kitchen AbvGr', 'TotRms AbvGrd', 'Fireplaces', 'Garage Yr Blt', 'Garage Cars', 'Garage Area', 'Wood Deck SF', 'Open Porch SF', 'Enclosed Porch', '3Ssn Porch', 'Screen Porch', 'Pool Area', 'Misc Val', 'Mo Sold', 'Yr Sold')
-#y_axis <- 'SalePrice'
-#
-#for (x_axis in x_axises) {
-#  ggplot(ames_raw, aes_string(x = x_axis, y = y_axis)) +
-#      geom_point() +
-#      labs(title = paste("Scatter Plot of", x_axis, "vs", y_axis))
-#}
+x_axises <- c("lot_frontage", 'lot_area')
+y_axis <- 'SalePrice'
+
+for (x_axis in x_axises) {
+  #ggplot(ames_raw, aes_string(x = x_axis, y = y_axis)) +
+  ggplot(ames_data, aes(x = x_axis, y = y_axis)) +
+      geom_point() +
+      labs(title = paste("Scatter Plot of", x_axis, "vs", y_axis))
+}
 #
 #
 #plot(ames_raw$`Lot Area`, ames_raw$SalePrice)
